@@ -1,0 +1,9 @@
+digraph G {
+mu;
+sigma;
+"Observed Samples" [style=filled];
+mu -> "Observed Samples"  [label=mu];
+"(sigma_pow_-2)" [shape=invtriangle];
+"(sigma_pow_-2)" -> "Observed Samples"  [label=tau];
+sigma -> "(sigma_pow_-2)"  [label=a];
+}
