@@ -7,9 +7,9 @@ from uncertainties.unumpy               import nominal_values, std_devs
 from scipy.optimize                     import curve_fit
 from lmfit                              import Model, Parameters, minimize as lmfit_minimize, fit_report, Minimizer
 from kapteyn                            import kmpfit
-from libraries.Math_Libraries.sigfig    import round_sig
-from libraries.Math_Libraries.bces_script import bces, bcesboot
-from pandas import DataFrame
+from lib.CodeTools.sigfig               import round_sig
+from lib.Math_Libraries.bces_script     import bces, bcesboot
+from pandas                             import DataFrame
 import statsmodels.formula.api as smf
 
 def linear_model2(x, mA, mB, n):

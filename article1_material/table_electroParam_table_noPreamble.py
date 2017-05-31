@@ -1,5 +1,5 @@
 from dazer_methods import Dazer
-from libraries.Math_Libraries.sigfig import round_sig
+from lib.CodeTools.sigfig   import round_sig
 
 def colorChooser(ObsRatio, TheRatio):
      
@@ -32,14 +32,14 @@ cHbeta_type = 'cHbeta_emis'
 
 #Define data to load
 ext_data        = '_emis2nd'
-pdf_address     = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/objProperties_noPreamble'
+pdf_address     = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/tables/objProperties_noPreamble'
   
 #Headers
 properties_list =   ['neSII', 'TeSIII', 'TeOIII'] 
 properties_list =   map(( lambda x: x + ext_data), properties_list)
 headers_format  =   ['HII Galaxy', r'$\frac{[OIII]\lambda5007\AA}{[OIII]\lambda4959\AA}$', r'$\frac{[SIII]\lambda9531\AA}{[SIII]\lambda9069\AA}$'] 
 headers_format  +=  [r'$n_{e}[SII](cm^{-3})$',  r'$T_{e}[SIII](K)$',  r'$T_{e}[OIII](K)$']
-headers_format  +=  [r'$T_{low}$', r'$T_{high}$']
+#headers_format  +=  [r'$T_{low}$', r'$T_{high}$']
  
 #Set the pdf format
 dz.pdf_insert_table(headers_format)
@@ -73,10 +73,18 @@ for objName in catalogue_df.loc[dz.idx_include].index:
         O3_entry = '-'        
     
     #Fill the table
-    entry_name   = '{slash}href{{{url}}}{{{text}}}'.format(slash='\\',url=catalogue_df.loc[objName].SDSS_Web,text=catalogue_df.loc[objName].quick_index).replace('&','\&')
+    if (catalogue_df.loc[objName].T_low == 'TeSIII') and (catalogue_df.loc[objName].T_high == 'TeOIII'):
+        exponent = ''
+    elif (catalogue_df.loc[objName].T_low != 'TeSIII'):
+        exponent = 'O'
+    else:
+        exponent = 'S'
+        
+    entry_name   = '{codename}$^{{{elements}}}$'.format(codename=catalogue_df.loc[objName].quick_index, elements=exponent)
+    print entry_name
     T_low_entry  = r'$T_{e}[SIII]$' if catalogue_df.loc[objName].T_low == 'TeSIII' else r'$T_{e}[SIII] eq.16$'
     T_high_entry = r'$T_{e}[OIII]$' if catalogue_df.loc[objName].T_high == 'TeOIII' else r'$T_{e}[OIII] eq.16$'
-    row          = [entry_name] + [O3_entry] + [s3_entry] + list(catalogue_df.loc[objName, properties_list].values) + [T_low_entry, T_high_entry]
+    row          = [entry_name] + [O3_entry] + [s3_entry] + list(catalogue_df.loc[objName, properties_list].values)# + [T_low_entry, T_high_entry]
     dz.addTableRow(row, last_row = False if catalogue_df.index[-1] != objName else True, rounddig=3)
  
 dz.generate_pdf(output_address=pdf_address)

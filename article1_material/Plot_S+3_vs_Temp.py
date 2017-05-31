@@ -17,7 +17,7 @@ idcs            = (pd.notnull(catalogue_df.TeSIII_emis2nd)) & (pd.notnull(catalo
 idcs_oxygen     = (pd.notnull(catalogue_df.OI_HI_emis2nd)) & (pd.notnull(catalogue_df.OII_HII_emis2nd)) & (catalogue_df.quick_index.notnull())
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':20, 'legend.framealpha':None, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':18, 'ytick.labelsize':18}
+size_dict = {'axes.labelsize':24, 'legend.fontsize':22, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
 dz.FigConf(plotSize = size_dict)
 
 x_values        = catalogue_df.loc[idcs].TeSIII_emis.values
@@ -57,9 +57,8 @@ dz.plot_text(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_valu
 
 dz.data_plot(unumpy.nominal_values(x_values), unumpy.nominal_values(y_values), label= '', x_error=unumpy.std_devs(x_values), y_error=unumpy.std_devs(y_values))
  
-dz.FigWording(r'$T_{low} (K)$', r'$ICF(S^{+3})$', r'$ICF(S^{+3})$ versus temperature', loc='best')
+dz.FigWording(r'$T_{low} (K)$', r'$ICF(S^{+3})$', '', loc='best')
  
-
-dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/Images/ICF_S+3')
+dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/ICF_S+3')
 
 

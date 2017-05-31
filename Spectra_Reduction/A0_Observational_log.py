@@ -3,14 +3,14 @@ from shutil                     import move
 from pandas                     import set_option
 from DZ_observation_reduction   import spectra_reduction
 import pyfits
-from dazer_methods import Dazer
+from dazer_methods          import Dazer
 
 set_option('display.max_columns', None)
 set_option('display.max_rows', None)
  
 #Declare object
-dzt = Dazer()
-dz = spectra_reduction()
+dz = Dazer()
+dz.load_reduction_tools()
 
 #Objects and file
 pattern = '.fit'
@@ -81,7 +81,7 @@ print dz.reducDf
 
 #Check if the files is already there before overwritting
 if path.isfile(dz.reduc_RootFolder + dz.frame_filename):
-    delete_check = dzt.query_yes_no('Are you sure you want to delete reduction_dataframe?', 'no')
+    delete_check = dz.query_yes_no('Are you sure you want to delete reduction_dataframe?', 'no')
     if delete_check:
         dz.save_reducDF()
         print 'Log generated'

@@ -1,7 +1,7 @@
 import os
 import pyfits
 from DZ_observation_reduction   import spectra_reduction
-from libraries.Astro_Libraries  import cosmics
+from lib.Astro_Libraries  import cosmics
 
 #Load iraf pypeline object
 dz = spectra_reduction()

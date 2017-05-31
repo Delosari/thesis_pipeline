@@ -3,13 +3,13 @@ from dazer_methods import Dazer
 from numpy import nanmean, nanstd, min as np_min, linspace,  max as np_max
 from uncertainties import ufloat
 from uncertainties import unumpy
-from libraries.Math_Libraries.FittingTools import bces_regression
- 
+from lib.Math_Libraries.FittingTools import bces_regression
+
 #Generate dazer object
 dz = Dazer()
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':20, 'legend.fontsize':17, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':18, 'ytick.labelsize':18}
+size_dict = {'axes.labelsize':24, 'legend.fontsize':24, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
 dz.FigConf(plotSize = size_dict)
 
 #Load catalogue dataframe
@@ -46,14 +46,14 @@ dz.data_plot(x_regression, y_fit, 'Orthogonal linear fit from data', linestyle =
 dz.data_plot(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array), 'HII galaxies', markerstyle='o',  x_error=unumpy.std_devs(TeOIII_array),  y_error=unumpy.std_devs(TeSIII_array))
 dz.plot_text(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array),  objects)
   
-dz.data_plot(x_regression, y_regression_Garnet92, 'Observations (Garnet et al 1992)', linestyle = ':')
-dz.data_plot(x_regression, y_regression_EpmDiaz05, r'Models ($P\'erez$ montero et al 2005)', linestyle = '--')
-dz.data_plot(x_regression, y_regression_Epm2014, r'Models ($P\'erez$ montero 2014)', linestyle = '-.')
+dz.data_plot(x_regression, y_regression_Garnet92, 'Observations Garnett (1992)', linestyle = ':')
+dz.data_plot(x_regression, y_regression_EpmDiaz05, r'Models $P\'erez$ montero et al (2005)', linestyle = '--')
+dz.data_plot(x_regression, y_regression_Epm2014, r'Models $P\'erez$ montero (2014)', linestyle = '-.')
   
-Title       = r'Sulfur versus Oxygen temperature comparison'
+Title       = ''#r'Sulfur versus Oxygen temperature comparison'
 y_Title     = r'$T_{e}[SIII]\,(K)$'
 x_Title     = r'$T_{e}[OIII]\,(K)$'
 dz.FigWording(x_Title, y_Title, Title)
-dz.display_fig()
-#dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/Images/temperatures_comparison')
+#dz.display_fig()
+dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/temperatures_comparison')
 

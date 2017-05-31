@@ -22,7 +22,7 @@ dz = Dazer()
 catalogue_df    = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx')
 
 #Define data to load
-pdf_address     = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/reference_table_noPreamble'
+pdf_address     = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/tables/reference_table_noPreamble'
 
 #Generate pdf
 #dz.create_pdfDoc(pdf_address, pdf_type='table')

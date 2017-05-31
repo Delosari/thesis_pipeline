@@ -20,7 +20,7 @@ cHbeta_type = 'cHbeta_emis'
 #Loop through objects:
 for objName in catalogue_df.index:
         
-        try:
+#         try:
         
             print '\n-Treating: {} {}/{}'.format(objName, catalogue_df.index.get_loc(objName), len(catalogue_df))
                         
@@ -69,8 +69,8 @@ for objName in catalogue_df.index:
             #Store the abundances
             dz.store_abundances_excel(objName, catalogue_df, extension = '_emis2nd')
         
-        except:
-            print 'OBJ failed'
+#         except:
+#             print 'OBJ failed'
         
         
 dz.save_excel_DF(catalogue_df, '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx', df_sheet_format = 'catalogue_data')

@@ -49,7 +49,7 @@ def region_indeces(wave_min, wave_max, wavenlength_range):
     indeces_array       = array(range(low_trim, up_trim))
      
     return indeces_array
- 
+
 dz = Dazer()
 dz_reduc = spectra_reduction()
 
@@ -59,7 +59,8 @@ lickIndcs_extension = '_lick_indeces.txt'
 #Load catalogue dataframe
 catalogue_dict = dz.import_catalogue()
 catalogue_df = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx')
- 
+image_address = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/telluric_correction_detail'
+
 SIII_theo = 2.469
 H7_H8_ratio_theo = 1.98
 
@@ -250,10 +251,9 @@ for i in range(len(catalogue_df.index)):
             axins2.get_yaxis().set_visible(False)
             
                  
-            dz.FigWording('', 'Flux ' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', 'SDSSJ024815.93-081716.5 spectrum from ISIS red arm', loc='upper left', graph_axis=dz.ax1, sort_legend=True) 
+            dz.FigWording('', 'Flux ' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', '', loc='upper left', graph_axis=dz.ax1, sort_legend=True) 
             dz.FigWording(r'Wavelength $(\AA)$', 'Normalized flux', '', loc='lower center', graph_axis=dz.ax2, ncols_leg=4) 
             
-            image_address = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/Images/' + 'telluric_correction_detail'
             
             dz.ax2.set_ylim(0.2,1.25)
             if 'S3_9531A_continuum' in obj_dict:

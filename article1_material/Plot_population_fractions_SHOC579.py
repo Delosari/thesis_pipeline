@@ -37,9 +37,7 @@ def light_fraction_plot(Sl_OutputFolder, Sl_OutputFile, objName, parameter, oupu
     area_stellar    = trapz(Int_S[idx_ste], Wave_S[idx_ste])
     
     ratio_flux      = area_neb/area_stellar * 100
-    
-    print ratio_flux
-    
+        
     #Generate the data from the starlight file
     dz.populations_histogram(Sl_OutputFolder, Sl_OutputFile, parameter)
     
@@ -52,14 +50,14 @@ def light_fraction_plot(Sl_OutputFolder, Sl_OutputFile, objName, parameter, oupu
     dz.Axis.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.2f'))
   
     # Set titles and legend
-    plot_Title  = 'Galaxy ' + objName + ' SSP synthesis light fraction' 
+    plot_Title  = ''#'Galaxy ' + objName + ' SSP synthesis light fraction' 
     plot_xlabel = r'$log(Age)$'
     plot_ylabel = r'Light fraction %'
       
-    dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = (0.57,0.54), sort_legend=True)       
+    dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = (0.56,0.51), sort_legend=True)       
     
     #Save the data to the Catalogue folder
-    output_pickle = '{objFolder}{objCode}_{ext}'.format(objFolder='/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/Images/', objCode=objName, ext='LightFraction')
+    output_pickle = '{objFolder}{objCode}_{ext}'.format(objFolder='/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/', objCode=objName, ext='LightFraction')
     dz.save_manager(output_pickle, save_pickle = False)
  
     return
@@ -79,18 +77,17 @@ def mass_fraction_plot(Sl_OutputFolder, Sl_OutputFile, parameter, ouput_folder, 
     dz.Axis.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.2f'))
   
     # Set titles and legend
-    plot_Title  = 'Galaxy ' + objName + ' SSP synthesis ' + r'$(log(M_{T})$ = ' + r'$'+str(round(LogMass,2))+')$'
+    plot_Title  = ''#'Galaxy ' + objName + ' SSP synthesis ' + r'$(log(M_{T})$ = ' + r'$'+str(round(LogMass,2))+')$'
     plot_xlabel = r'$log(Age)$'
     plot_ylabel = r'Mass fraction (%)'
       
     dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = 'best', sort_legend=True)
          
     #Save the data to the Catalogue folder
-    output_pickle = '{objFolder}{objCode}_{ext}'.format(objFolder='/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/Images/', objCode=objName, ext='MassFraction')
+    output_pickle = '{objFolder}{objCode}_{ext}'.format(objFolder='/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/', objCode=objName, ext='MassFraction')
     dz.save_manager(output_pickle, save_pickle = False)
        
     return
-
 #Declare objects
  
 dz = Dazer()
@@ -102,7 +99,7 @@ catalogue_df    = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_ob
 Sl_OutputFolder = '/home/vital/Starlight/Output/'
  
 #Define plot frame and colors
-size_dict = {'axes.labelsize':20, 'legend.framealpha':None, 'legend.fontsize':17, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':18, 'ytick.labelsize':18}
+size_dict = {'axes.labelsize':24, 'legend.fontsize':18, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
 dz.FigConf(plotSize = size_dict)
 
 #Loop through files

@@ -32,7 +32,7 @@ dz = Dazer()
 script_code = dz.get_script_code()
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':18, 'ytick.labelsize':18}
+size_dict = {'axes.labelsize':24, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
 dz.FigConf(plotSize = size_dict)
 
 #Load catalogue dataframe
@@ -42,7 +42,7 @@ dz.quick_indexing(catalogue_df)
 output_folder = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/'
 
 #Regressions properties
-MC_iterations   = 5000
+MC_iterations   = 10000
 WMAP_coordinates = array([ufloat(0.0, 0.0), ufloat(0.24709, 0.00025)])
 
 #Generate the indeces
@@ -110,10 +110,6 @@ for i in range(len(Regresions_dict['Regressions'])):
         metal_matrix[j,:]   = random.normal(x[j].nominal_value, x[j].std_dev, size = MC_iterations)
         Y_matrix[j,:]       = random.normal(y[j].nominal_value, y[j].std_dev, size = MC_iterations)
     
-#     x_i = metal_matrix[:,0]
-#     y_i = Y_matrix[:,0]    
-#     fitobj = kmpfit.Fitter(residuals=residuals_lin, data= (x_i, y_i))
-    
     #Run the fits
     for k in range(MC_iterations):
         x_i = metal_matrix[:,k]
@@ -152,55 +148,50 @@ for i in range(len(Regresions_dict['Regressions'])):
     
     print element
     print 'New methods'
-    print m[0], m[1], m[2], m[3]
-    print m_err[0], m_err[1], m_err[2], m_err[3]
-    print n[0], n[1], n[2], n[3]
-    print n_err[0], n_err[1], n_err[2], n_err[3]
+    print m[3]
+    print m_err[3]
+    print n[3]
+    print n_err[3]
 
-    print 'Classical'
-    print n_Median, round_sig(n_Median-n_16th,2, scien_notation=False), round_sig(n_84th-n_Median,2, scien_notation=False)
-    
-    print 'Lmfit'
-    print n_Median_lm, n_Median_lm_error
+#     print 'Classical'
+#     print n_Median, round_sig(n_Median-n_16th,2, scien_notation=False), round_sig(n_84th-n_Median,2, scien_notation=False)
+#     
+#     print 'Lmfit'
+#     print n_Median_lm, n_Median_lm_error
     
     print 'curvefit'
     print n_Median_cf, n_84th_cf - n_Median_cf ,n_Median_cf - n_16th_cf
 
-    print 'kapteyn'
-    print n_Median_kp, n_84th_kp - n_Median_kp ,n_Median_kp - n_16th_kp
+#     print 'kapteyn'
+#     print n_Median_kp, n_84th_kp - n_Median_kp ,n_Median_kp - n_16th_kp
   
     #Linear data
     x_regression_range  = linspace(0.0, max(nominal_values(x)) * 1.10, 20)
-    y_regression_range  = m_Median * x_regression_range + n_Median
+    y_regression_range  = m_Median_cf * x_regression_range + n_Median_cf
     label_regr = 'Linear fit'  
     #label_regr          = 'SCIPY bootstrap: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
     
     #Plotting the data, 
-    label_regression = r'WMAP prediction: $Y = 0.24709\pm0.00025$'
-    dz.data_plot(nominal_values(x), nominal_values(y), color = Regresions_dict['Colors'][i], label='HII galaxies included in regression', markerstyle='o', x_error=std_devs(x), y_error=std_devs(y))
-    dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color = dz.colorVector['pink'], label='WMAP prediction', markerstyle='o', x_error=WMAP_coordinates[0].std_dev, y_error=WMAP_coordinates[1].std_dev)    
+    label_regression = r'Plank prediction: $Y = 0.24709\pm0.00025$'
+    dz.data_plot(nominal_values(x), nominal_values(y), color = Regresions_dict['Colors'][i], label='HII galaxies included', markerstyle='o', x_error=std_devs(x), y_error=std_devs(y))
     dz.data_plot(x_regression_range, y_regression_range, label = label_regr, color = Regresions_dict['Colors'][i], linestyle = '--')
     dz.plot_text(nominal_values(x), nominal_values(y), quick_ref)
     
     #Plotting NO objects
-    dz.data_plot(nominal_values(x_NO), nominal_values(y_NO), color = Regresions_dict['Colors'][i], label='HII galaxies excluded in regression', markerstyle='x', x_error=std_devs(x_NO), y_error=std_devs(y_NO))
+    dz.data_plot(nominal_values(x_NO), nominal_values(y_NO), color = Regresions_dict['Colors'][i], label='HII galaxies excluded', markerstyle='x', x_error=std_devs(x_NO), y_error=std_devs(y_NO), e_style=':')
     dz.plot_text(nominal_values(x_NO), nominal_values(y_NO), quickref_NO)
 
-    #Lmfit regression
-    label       =  r'{title}: $Y_{{P}} = {n}\pm_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = 'Lmfit', n = round_sig(n_Median_lm,4, scien_notation=False), lowerlimit = round_sig(n_Median_lm-n_16th_lm,2, scien_notation=False), upperlimit = round_sig(n_84th_lm-n_Median_lm,2, scien_notation=False))
-    label       =  r'{title}: $Y_{{P}} = {n}\pm_{lmfit_err}$'.format(title = 'Lmfit', n = round_sig(n_Median_lm,4, scien_notation=False), lmfit_err = round_sig(n_Median_lm_error,2, scien_notation=False))
-    y_regression_range_lmfit = m_Median_lm * x_regression_range + n_Median_lm
-    dz.data_plot(x_regression_range, y_regression_range_lmfit, label = label, linestyle = '--')
-    
-#     for z in [0,3]:
-#         n_z, n_err_z  = n[z], n_err[z]
-#         m_z           = m[z]
-#         label       = r'Method {title}: $Y_{{P}} = {n}\pm{n_err}$'.format(title = regr_dict[str(z)], n = round_sig(n_z, 4, scien_notation=False), n_err = round_sig(n_err_z, 2, scien_notation=False))
-#         regre_z     = m_z * x_regression_range + n_z
-#         dz.data_plot(x_regression_range, regre_z, label = label, linestyle = '--')
-        
-    plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
-    dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], plotTitle, loc='best')
+    #Plot WMAP prediction
+    dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color = dz.colorVector['pink'], label='WMAP prediction', markerstyle='o', x_error=WMAP_coordinates[0].std_dev, y_error=WMAP_coordinates[1].std_dev)    
+
+#     #Lmfit regression
+#     label       =  r'{title}: $Y_{{P}} = {n}\pm_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = 'Lmfit', n = round_sig(n_Median_lm,4, scien_notation=False), lowerlimit = round_sig(n_Median_lm-n_16th_lm,2, scien_notation=False), upperlimit = round_sig(n_84th_lm-n_Median_lm,2, scien_notation=False))
+#     label       =  r'{title}: $Y_{{P}} = {n}\pm_{lmfit_err}$'.format(title = 'Lmfit', n = round_sig(n_Median_lm,4, scien_notation=False), lmfit_err = round_sig(n_Median_lm_error,2, scien_notation=False))
+#     y_regression_range_lmfit = m_Median_lm * x_regression_range + n_Median_lm
+#     dz.data_plot(x_regression_range, y_regression_range_lmfit, label = label, linestyle = '--')
+            
+    #plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
+    dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], '', loc='best')
 
     output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
     dz.save_manager(output_pickle, save_pickle = False)

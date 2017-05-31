@@ -101,6 +101,7 @@ for i in range(len(catalogue_df.index)):
 #         #Save data  
 #         output_pickle = '{objFolder}{stepCode}_{objCode}_{ext}'.format(objFolder=ouput_folder, stepCode=dz.ScriptCode, objCode=objName, ext='comparison_spectra')
 #         dz.save_manager(output_pickle, save_pickle = True)
+
         dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/Images/SHOC579_continua_detail')
 #-----------------------------------------------------------------------------------------------------
 print 'All data treated', dz.display_errors()
