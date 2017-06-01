@@ -46,9 +46,9 @@ dz.data_plot(x_regression, y_fit, 'Orthogonal linear fit from data', linestyle =
 dz.data_plot(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array), 'HII galaxies', markerstyle='o',  x_error=unumpy.std_devs(TeOIII_array),  y_error=unumpy.std_devs(TeSIII_array))
 dz.plot_text(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array),  objects)
   
-dz.data_plot(x_regression, y_regression_Garnet92, 'Observations Garnett (1992)', linestyle = ':')
-dz.data_plot(x_regression, y_regression_EpmDiaz05, r'Models $P\'erez$ montero et al (2005)', linestyle = '--')
-dz.data_plot(x_regression, y_regression_Epm2014, r'Models $P\'erez$ montero (2014)', linestyle = '-.')
+dz.data_plot(x_regression, y_regression_Garnet92,   'Observations Garnett (1992)', linestyle = ':')
+dz.data_plot(x_regression, y_regression_EpmDiaz05,  r'Models $P\'erez$ montero et al (2005)', linestyle = '--')
+dz.data_plot(x_regression, y_regression_Epm2014,    r'Models $P\'erez$ montero (2014)', linestyle = '-.')
   
 Title       = ''#r'Sulfur versus Oxygen temperature comparison'
 y_Title     = r'$T_{e}[SIII]\,(K)$'
