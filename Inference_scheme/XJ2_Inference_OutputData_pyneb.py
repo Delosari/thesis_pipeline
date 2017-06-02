@@ -158,11 +158,11 @@ for i in range(len(FilesList)):
 #         bp.plot_posteriors_histagram(Traces_code, Traces_labels)        
 #         pv.SaveManager(pv.ScriptCode + '_' + CodeName + '_PosteriorHistograms', FileFolder, ForceSave=True, ForceDisplay=False, savevectorfile=False)
 #         pv.ResetPlot()
-             
+#             
 #         bp.plot_acorrelation(Traces_code, Traces_labels)
 #         pv.SaveManager(pv.ScriptCode + '_' + CodeName + '_TracesAcorr', FileFolder, ForceSave=True, ForceDisplay=False, savevectorfile=False)
 #         pv.ResetPlot()
-      
+#      
 #         bp.plot_triangle_histContours(['He_abud', 'T_e', 'n_e', 'c_Hbeta', 'Tau', 'Xi'], [r'$y^{+}$', r'$T_{e}\,(K)$',  r'$n_{e}\,(cm^{-3})$', r'$c(H\beta)$', r'$\tau$', r'$\xi$'])
 #         bp.savefig(FileFolder + pv.ScriptCode + '_' + CodeName + '_triangleContourAll', reset_fig=True)
 #         pv.ResetPlot()
