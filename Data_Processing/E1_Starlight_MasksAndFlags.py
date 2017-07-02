@@ -65,7 +65,7 @@ for i in range(len(catalogue_df.index)):
     # Set titles and legend
     PlotTitle = r'Object ' + objName + ' spectrum with masked and flagged pixels' 
     dz.FigWording(r'Wavelength $(\AA)$', 'Flux' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', PlotTitle)
-
+    dz.Axis.set_aspect(3)
     dz.display_fig()
     
 #     # Save data  

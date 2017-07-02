@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from dazer_methods import Dazer
-from numpy import linspace, zeros, hstack
+from numpy import linspace, zeros, hstack, array
 from scipy.interpolate import interp1d
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
@@ -18,7 +18,7 @@ Stellar_ext             = '_StellarContinuum.fits'
 emitting_ext            = '_Emission.fits'
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':20, 'legend.fontsize':18, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':18, 'ytick.labelsize':18}
+size_dict = {'figure.figsize':(36,10), 'axes.labelsize':25, 'legend.fontsize':25, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':25, 'ytick.labelsize':25}
 dz.FigConf(plotSize = size_dict)
 
 #Reddening properties
@@ -26,6 +26,9 @@ R_v = 3.4
 red_curve = 'G03'
 cHbeta_type = 'cHbeta_reduc'
 
+recombination_regions = array([3889, 4340,  4101, 4471, 4685, 4862, 5875, 6562, 6678])
+metals_regions        = array([3726, 3728, 4363, 4740, 4958, 5007, 6716, 6730, 9069, 6548, 6583, 7135, 9531])
+                           
 #Loop through files
 for i in range(len(catalogue_df.index)):
     
@@ -65,20 +68,24 @@ for i in range(len(catalogue_df.index)):
         Int_Sum = IntEmi_dered + Int_Stellar_Resampled + Int_N
     
         dz.data_plot(Wave_O, IntObs_dered, 'Observed spectrum')
-        dz.data_plot(Wave_N, Int_N, 'Nebular continuum',linestyle=':')
-        dz.data_plot(Wave_S, Int_S, 'Stellar continuum',linestyle='--')
-        dz.insert_image('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SHOC579_invert.png', Image_Coordinates = [0.07,0.875], Zoom=0.25, Image_xyCoords = 'axes fraction')
+        dz.data_plot(Wave_N, Int_N, 'Nebular continuum',linestyle='-')
+        dz.data_plot(Wave_S, Int_S, 'Stellar continuum',linestyle='-')
+#         dz.insert_image('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SHOC579_invert.png', Image_Coordinates = [0.07,0.875], Zoom=0.25, Image_xyCoords = 'axes fraction')
+
+        dz.area_fill(metals_regions - 10 , metals_regions + 10, 'Collisional excitation lines', color = dz.colorVector['olive'], alpha = 0.5)
+        dz.area_fill(recombination_regions - 10 , recombination_regions + 10, 'Recombination lines', color = dz.colorVector['pink'], alpha = 0.5)
+
 
         #Set titles and legend
         PlotTitle = ''
-        dz.FigWording(r'Wavelength $(\AA)$', 'Flux' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', PlotTitle, loc='upper right')   
+        dz.FigWording(r'Wavelength $(\AA)$', 'Flux' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', PlotTitle, loc='upper right', ncols_leg=2)   
         
         dz.Axis.set_xlim(3550, 10000)
         
         axins2 = zoomed_inset_axes(dz.Axis, zoom=16, loc=7)
         axins2.step(Wave_O, Int_O, label='Observed spectrum') #, linestyle='--', color=colorVector['dark blue'], where = 'mid')       
-        axins2.step(Wave_N, Int_N, label='Nebular continuum',linestyle=':') #,color=colorVector['orangish'], where = 'mid', linewidth=0.75)
-        axins2.step(Wave_S, Int_S, label='Stellar continuum',linestyle='--') #,color=colorVector['orangish'], where = 'mid', linewidth=0.75)
+        axins2.step(Wave_N, Int_N, label='Nebular continuum model',linestyle='-') #,color=colorVector['orangish'], where = 'mid', linewidth=0.75)
+        axins2.step(Wave_S, Int_S, label='Stellar continuum model',linestyle='-') #,color=colorVector['orangish'], where = 'mid', linewidth=0.75)
         
         mean_flux = Int_O.mean()
 
@@ -88,7 +95,10 @@ for i in range(len(catalogue_df.index)):
                      
         axins2.get_xaxis().set_visible(False)
         axins2.get_yaxis().set_visible(False)
-
-        dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SHOC579_continua_detail')
+        #dz.Axis.set_aspect(2)
+        
+        #dz.display_fig()
+        dz.savefig('/home/vital/Dropbox/Astrophysics/Seminars/Cloudy School 2017/spectra_components')
+        
 #-----------------------------------------------------------------------------------------------------
 print 'All data treated', dz.display_errors()
