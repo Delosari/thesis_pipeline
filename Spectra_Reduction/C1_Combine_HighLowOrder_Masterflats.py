@@ -58,6 +58,8 @@ dz.generate_step_pdf(indeces_print, file_address = dz.reducFolders['reduc_data']
  
 dz.beep_alarmn()
 
+
+
 # #-------replacing only the wiggles section
 # 
 # from numpy import copy, zeros, arange, std

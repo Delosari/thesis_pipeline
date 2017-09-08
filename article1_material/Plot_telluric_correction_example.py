@@ -243,17 +243,14 @@ for i in range(len(catalogue_df.index)):
             axins2.set_xlim(9540, 9620)
             axins2.set_ylim(-0.2e-16, 3.0e-16)
             mark_inset(dz.ax1, axins2, loc1=2, loc2=4, fc="none", ec="0.5") 
-     
-                        
+                 
             axins.get_xaxis().set_visible(False)
             axins.get_yaxis().set_visible(False)
             axins2.get_xaxis().set_visible(False)
             axins2.get_yaxis().set_visible(False)
-            
                  
             dz.FigWording('', 'Flux ' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', '', loc='upper left', graph_axis=dz.ax1, sort_legend=True) 
             dz.FigWording(r'Wavelength $(\AA)$', 'Normalized flux', '', loc='lower center', graph_axis=dz.ax2, ncols_leg=4) 
-            
             
             dz.ax2.set_ylim(0.2,1.25)
             if 'S3_9531A_continuum' in obj_dict:
@@ -261,8 +258,10 @@ for i in range(len(catalogue_df.index)):
             else:
                 dz.ax1.set_ylim(0.005 * mean_flux, 20 * mean_flux)
             
-            dz.savefig(image_address, extension='.png') 
-            #dz.display_fig()
+            dz.insert_image('/home/vital/Downloads/obj08_SDSS_image_color.png', Image_Coordinates = [0.40,0.875], Zoom=0.25, Image_xyCoords = 'axes fraction', axis_plot=dz.ax1)
+            
+            #dz.savefig(image_address, extension='.png') 
+            dz.display_fig()
             
 #         output_pickle = '{objFolder}{stepCode}_{objCode}_{ext}'.format(objFolder=ouput_folder, stepCode=script_code, objCode=objName, ext='Telluric correction')
 #         dz.save_manager(output_pickle, save_pickle = True)

@@ -26,7 +26,7 @@ AbundancesFileExtension = '_' + catalogue_dict['Datatype'] + '_linesLog_reduc.tx
    
 #Reddening properties
 R_v             = 3.4
-red_curve       = 'G03'
+red_curve       = 'G03_average'
 cHbeta_type     = 'cHbeta_emis'
     
 #Define table properties
@@ -133,8 +133,11 @@ for obj_group in [['8', 'SHOC579']]:
         
         cHbeta_reduc_entry  = '{}$\pm${}'.format(round_sig(cHbeta_reduc.nominal_value, 2, scien_notation=False), round_sig(cHbeta_reduc.std_dev, 1, scien_notation=False))
         cHbeta_emis_entry   = '{}$\pm${}'.format(round_sig(cHbeta_emis.nominal_value, 2, scien_notation=False), round_sig(cHbeta_emis.std_dev, 1, scien_notation=False))
-        row_cHbeta  += ['', cHbeta_reduc_entry, cHbeta_emis_entry]
-           
+        #row_cHbeta  += ['', cHbeta_reduc_entry, cHbeta_emis_entry]
+        row_cHbeta  += ['', cHbeta_emis_entry, '']
+        print cHbeta_emis_entry
+        
+        
     dz.addTableRow(row_F, last_row = False)
     dz.addTableRow(row_clean, last_row = False)
     dz.addTableRow(row_cHbeta, last_row = True) 
