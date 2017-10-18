@@ -4,7 +4,7 @@ from numpy                              import empty, random, median, percentile
 from scipy                              import stats
 from uncertainties                      import ufloat
 from uncertainties.unumpy               import nominal_values, std_devs
-from libraries.Math_Libraries.sigfig    import round_sig
+from lib.Plotting_Libraries.sigfig import round_sig
 from pandas import DataFrame
 import statsmodels.formula.api as smf
 from matplotlib import pyplot as plt

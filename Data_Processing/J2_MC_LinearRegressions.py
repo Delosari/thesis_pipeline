@@ -199,10 +199,10 @@ for i in range(len(Regresions_dict['Regressions'])):
 #         regre_z     = m_z * x_regression_range + n_z
 #         dz.data_plot(x_regression_range, regre_z, label = label, linestyle = '--')
         
-    plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
-    dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], plotTitle, loc='best')
-
-    output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
-    dz.save_manager(output_pickle, save_pickle = False)
+#     plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
+#     dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], plotTitle, loc='best')
+# 
+#     output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
+#     dz.save_manager(output_pickle, save_pickle = False)
 
 
