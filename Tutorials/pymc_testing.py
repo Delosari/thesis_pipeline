@@ -90,7 +90,7 @@ MAP_Model.fit()
 MAP_Model.revert_to_max()
 
 # package the full model in a dictionary
-S = pymc.MCMC(MAP_Model.variables)
+S = pymc.MCMC(MAP_Model.variables, db='sqlite', dbname ='D:/Inference_data/testing_saving')#, dbmode='w', dbcomplevel=5, dbcomplib='zlib')
 # S = pymc.MCMC(bayesian_model(xdata, ydata))
 S.sample(iter=100000, burn=50000)
 
@@ -98,6 +98,8 @@ pymc_trace = [S.trace('alpha')[:],
               S.trace('beta')[:],
               S.trace('sigma')[:]]
 
+
+S.db.close()
 plot_MCMC_results(xdata, ydata, pymc_trace)
 
 print 'Inference predictions'
