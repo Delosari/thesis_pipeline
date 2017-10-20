@@ -67,7 +67,6 @@ method_dict['rlm3'] = residuals_lin3
 #Get the objects which contain both abundances
 for i in range(len(Regresions_list)):
     
-    print '\n---Regression', Regresions_list[i]
     Regression_group    = Regresions_list[i]
     dimensions_num      = len(Regression_group)
     ext_method          = str(dimensions_num) 
@@ -75,8 +74,8 @@ for i in range(len(Regresions_list)):
     
     #Define lmfit model
     params = Parameters()
-    for i in range(dimensions_num):
-        params.add('m' + str(i), value = 0.005)
+    for ji in range(dimensions_num):
+        params.add('m' + str(ji), value = 0.005)
     params.add('n', value = 0.25)
 
     #Loop through the elements valid objects
@@ -93,7 +92,8 @@ for i in range(len(Regresions_list)):
     for element in Regression_group:
         abunCode = '{}I_HI_emis2nd'.format(element)
         data_dict[element] = catalogue_df.loc[idcs, abunCode].values
-    
+
+    print '\n---Regression', Regresions_list[i], len(objects)
     #Generate containers for the data     
     metal_matrix    = empty((dimensions_num, len(objects), MC_iterations))
     Y_matrix        = empty((len(objects), MC_iterations))
