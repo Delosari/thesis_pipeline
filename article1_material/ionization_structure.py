@@ -12,8 +12,8 @@ dz.FigConf(plotSize = size_dict)
 
 #Declare data location
 folder_data       = '/home/vital/Dropbox/Astrophysics/Seminars/Cloudy School 2017/teporingos/Grid_data_vital/'
-file_name_list_S  = ['TGrid_Mass200000.0_age5.48_zStar-2.1_zGas0.008.ele_S', 'TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_S']
-file_name_list_O  = ['TGrid_Mass200000.0_age5.48_zStar-2.1_zGas0.008.ele_O', 'TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_O']
+file_name_list_S  = ['TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_S']#, 'TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_S']
+file_name_list_O  = ['TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_O']#, 'TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_O']
 z_list            = ['200000', '100000']
 ions_list_S       = ['S+', 'S+2', 'S+3']
 ions_labels_S     = [r'$S^{+}$', r'$S^{2+}$', r'$S^{3+}$']
@@ -67,11 +67,11 @@ dz.FigWording(r'$R_{19}$ $(10^{19}cm)$', r'$X(A^{+i})$', '', ncols_leg=1)
 
 leg = dz.Axis.get_legend()
 leg.legendHandles[0].set_color('black')
-leg.legendHandles[1].set_color('black')
+# leg.legendHandles[1].set_color('black')
 
 # dz.display_fig()
-dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SulfurIonization_fraction_vs_cloudThickness')
-
+# dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SulfurIonization_fraction_vs_cloudThickness')
+dz.savefig('/home/vital/Dropbox/Astrophysics/Seminars/Stasinska conference/SulfurIonization_fraction_vs_cloudThickness')
 
 # #Load catalogue dataframe
 # catalogue_dict  = dz.import_catalogue()

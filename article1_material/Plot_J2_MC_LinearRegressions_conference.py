@@ -175,11 +175,11 @@ for i in range(len(Regresions_dict['Regressions'])):
     label_regression = r'Plank prediction: $Y = 0.24709\pm0.00025$'
     dz.data_plot(nominal_values(x), nominal_values(y), color = Regresions_dict['Colors'][i], label='HII galaxies included', markerstyle='o', x_error=std_devs(x), y_error=std_devs(y))
     dz.data_plot(x_regression_range, y_regression_range, label = label_regr, color = Regresions_dict['Colors'][i], linestyle = '--')
-#     dz.plot_text(nominal_values(x), nominal_values(y), quick_ref)
+    dz.plot_text(nominal_values(x), nominal_values(y), quick_ref)
     
     #Plotting NO objects
     dz.data_plot(nominal_values(x_NO), nominal_values(y_NO), color = Regresions_dict['Colors'][i], label='HII galaxies excluded', markerstyle='x', x_error=std_devs(x_NO), y_error=std_devs(y_NO), e_style=':')
-#     dz.plot_text(nominal_values(x_NO), nominal_values(y_NO), quickref_NO)
+    dz.plot_text(nominal_values(x_NO), nominal_values(y_NO), quickref_NO)
 
     #Plot WMAP prediction
     dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color = dz.colorVector['pink'], label='WMAP prediction', markerstyle='o', x_error=WMAP_coordinates[0].std_dev, y_error=WMAP_coordinates[1].std_dev)    
@@ -188,13 +188,12 @@ for i in range(len(Regresions_dict['Regressions'])):
 #     label       =  r'{title}: $Y_{{P}} = {n}\pm_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = 'Lmfit', n = round_sig(n_Median_lm,4, scien_notation=False), lowerlimit = round_sig(n_Median_lm-n_16th_lm,2, scien_notation=False), upperlimit = round_sig(n_84th_lm-n_Median_lm,2, scien_notation=False))
 #     label       =  r'{title}: $Y_{{P}} = {n}\pm_{lmfit_err}$'.format(title = 'Lmfit', n = round_sig(n_Median_lm,4, scien_notation=False), lmfit_err = round_sig(n_Median_lm_error,2, scien_notation=False))
 #     y_regression_range_lmfit = m_Median_lm * x_regression_range + n_Median_lm
-#     dz.data_plot(x_regression_range, y_regression_range_lmfit, label = label, linestyle = '--') 
+#     dz.data_plot(x_regression_range, y_regression_range_lmfit, label = label, linestyle = '--')
             
     #plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
-    dz.Axis.set_ylim(0,0.5)
     dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], '', loc='best')
-    #dz.display_fig()
-    output_pickle = '/home/vital/Dropbox/Astrophysics/Seminars/Stasinska conference/{element}_regression_2nd'.format(objFolder=output_folder, element = element)
+
+    output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
     dz.save_manager(output_pickle, save_pickle = False)
 
 
