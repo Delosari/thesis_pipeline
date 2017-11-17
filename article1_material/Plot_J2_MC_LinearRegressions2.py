@@ -194,7 +194,7 @@ for i in range(len(Regresions_dict['Regressions'])):
     dz.Axis.set_ylim(0,0.5)
     dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], '', loc='best')
     #dz.display_fig()
-    output_pickle = '/home/vital/Dropbox/Astrophysics/Seminars/Stasinska conference/{element}_regression_2nd'.format(objFolder=output_folder, element = element)
+    output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
     dz.save_manager(output_pickle, save_pickle = False)
 
 

@@ -102,11 +102,12 @@ for i in range(len(catalogue_df.index)):
 #                      
 #         axins2.get_xaxis().set_visible(False)
 #         axins2.get_yaxis().set_visible(False)
+
         #dz.Axis.set_aspect(2)
+
+        dz.display_fig()
         
-        #dz.display_fig()
-        
-        dz.savefig('/home/vital/Dropbox/Astrophysics/Seminars/Stasinska conference/' + objName + '_TwOarms')
+        #dz.savefig('/home/vital/Dropbox/Astrophysics/Seminars/Stasinska conference/' + objName + '_TwOarms')
         
 #-----------------------------------------------------------------------------------------------------
 print 'All data treated', dz.display_errors()

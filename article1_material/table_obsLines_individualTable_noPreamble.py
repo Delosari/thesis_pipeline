@@ -36,7 +36,7 @@ linformat_df    = read_csv(lines_log_format_address, names=['line_label', 'ion',
 linformat_df.lambda_theo = round(linformat_df.lambda_theo.values, 2)
    
 #Start the table
-dz.create_pdfDoc(pdf_address, pdf_type='table')
+# dz.create_pdfDoc(pdf_address, pdf_type='table')
 
 dz.pdf_insert_table(table_format='l' + 'c' * (3 * obj_per_page))
 
@@ -141,8 +141,9 @@ for obj_group in [['8', 'SHOC579']]:
     dz.addTableRow(row_clean, last_row = False)
     dz.addTableRow(row_cHbeta, last_row = True) 
     dz.table.add_hline()
-   
-dz.generate_pdf()
+
+dz.generate_pdf(output_address=pdf_address)
+# dz.generate_pdf()
 
 
 # from numpy import nanmean, nanstd, mean, concatenate, unique, sum, round, nan
