@@ -34,29 +34,25 @@ y_regression_Garnet92   = (0.83 * x_regression/10000 + 0.17) * 10000
 y_regression_EpmDiaz05  = (1.05 * x_regression/10000 - 0.08) * 10000
 y_regression_Epm2014    = (0.92 * x_regression/10000 + 0.078) * 10000
 
-print 'estos', x_regression
-
 #Perform the fit
 regr_dict = bces_regression(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array), unumpy.std_devs(TeOIII_array), unumpy.std_devs(TeSIII_array))
  
 # for i in range(len(regr_dict['m'])):
 reg_code = 3
 y_fit = regr_dict['m'][reg_code] * x_regression + regr_dict['n'][reg_code]
-print regr_dict['m'][reg_code]
-print regr_dict['n'][reg_code]
-dz.data_plot(x_regression, y_fit, 'Orthogonal linear fit from data', linestyle = '-')
+dz.data_plot(x_regression, y_fit, 'Linear fit', linestyle = '-')
  
-dz.data_plot(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array), 'HII galaxies', markerstyle='o',  x_error=unumpy.std_devs(TeOIII_array),  y_error=unumpy.std_devs(TeSIII_array))
+dz.data_plot(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array), 'HII galaxies', markerstyle='o',  x_error=unumpy.std_devs(TeOIII_array),  y_error=unumpy.std_devs(TeSIII_array), color='tab:blue')
 dz.plot_text(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array),  objects)
   
-dz.data_plot(x_regression, y_regression_Garnet92,   'Observations Garnett (1992)', linestyle = ':')
-dz.data_plot(x_regression, y_regression_EpmDiaz05,  r'Models $P\'erez$ montero et al (2005)', linestyle = '--')
-dz.data_plot(x_regression, y_regression_Epm2014,    r'Models $P\'erez$ montero (2014)', linestyle = '-.')
+dz.data_plot(x_regression, y_regression_Garnet92,   'Garnett (1992)', linestyle = ':')
+dz.data_plot(x_regression, y_regression_EpmDiaz05,  r'$P\'erez$-Montero et al (2005)', linestyle = '--')
+dz.data_plot(x_regression, y_regression_Epm2014,    r'$P\'erez$-Montero (2014)', linestyle = '-.')
   
 Title       = ''#r'Sulfur versus Oxygen temperature comparison'
 y_Title     = r'$T_{e}[SIII]\,(K)$'
 x_Title     = r'$T_{e}[OIII]\,(K)$'
 dz.FigWording(x_Title, y_Title, Title)
-dz.display_fig()
-# dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/temperatures_comparison')
+# dz.display_fig()
+dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/temperatures_comparison')
 

@@ -47,12 +47,12 @@ for i in range(len(objects)):
     t_lows_thua[i] = catalogue_df.loc[obj, temp_label].nominal_value   
     t_lows_thua_err[i] = catalogue_df.loc[obj, temp_label].std_dev 
       
-dz.data_plot(T_low_array, unumpy.nominal_values(y_values), label = r'Argon $ICF(S^{3+})$ prediction', markerstyle='o', x_error=T_low_err_array, y_error=unumpy.std_devs(y_values))
+dz.data_plot(T_low_array, unumpy.nominal_values(y_values), label = r'Argon $ICF(S^{3+})$', markerstyle='o', x_error=T_low_err_array, y_error=unumpy.std_devs(y_values))
 dz.plot_text(unumpy.nominal_values(T_low_array), unumpy.nominal_values(y_values), text=quick_reference,x_pad=1.005,y_pad=1.005)
 
 #dz.data_plot(t_lows_thua, unumpy.nominal_values(ICFs_thuan), label = r'Oxygen $ICF(S^{3+})$ prediction (Thuan et al 1995)', color = '#009E73', markerstyle='^', x_error=t_lows_thua_err, y_error=unumpy.std_devs(ICFs_thuan))
 
-dz.data_plot(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_values), color=dz.colorVector['orangish'], label = r'$ICF(S^{3+})$ from IR literature sample (Dors 2016)', markerstyle='x', x_error=unumpy.std_devs(x_IR_values), y_error=unumpy.std_devs(y_IR_values))
+dz.data_plot(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_values), color=dz.colorVector['orangish'], label = r'$ICF(S^{3+})$ from IR (Dors 2016)', markerstyle='x', x_error=unumpy.std_devs(x_IR_values), y_error=unumpy.std_devs(y_IR_values))
 dz.plot_text(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_values), text=objectsIR,y_pad=1.005 )
 
 dz.data_plot(unumpy.nominal_values(x_values), unumpy.nominal_values(y_values), label= '', x_error=unumpy.std_devs(x_values), y_error=unumpy.std_devs(y_values))

@@ -1,21 +1,14 @@
 #!/usr/bin/env python
+import lineid_plot
 from collections import OrderedDict
-
 from dazer_methods import Dazer
-from numpy import linspace, zeros, hstack, array
-import lineid_plot
-import lineid_plot
-from scipy.interpolate import interp1d
-from mpl_toolkits.axes_grid1.inset_locator import mark_inset
-from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
 from matplotlib import rcParams, pyplot as plt
-
 from matplotlib._png        import read_png
 from matplotlib.offsetbox   import OffsetImage, AnnotationBbox
+from matplotlib.cbook import get_sample_data
 
 #Declare code classes
 dz = Dazer()
-script_code = dz.get_script_code()
 
 #Load catalogue dataframe
 catalogue_dict          = dz.import_catalogue()
@@ -26,8 +19,8 @@ Stellar_ext             = '_StellarContinuum.fits'
 emitting_ext            = '_Emission.fits'
 
 #Define plot frame and colors
-size_dict = {'figure.figsize':(26,10), 'axes.labelsize':20, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':20, 'ytick.labelsize':20}
-#dz.FigConf(plotSize = size_dict)
+size_dict = {'figure.figsize':(26,10),'axes.labelsize':20, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':20, 'ytick.labelsize':20}
+# dz.FigConf(plotSize = size_dict)
 
 #Reddening properties
 R_v = 3.4
@@ -48,10 +41,9 @@ obj_lines['8'][r'$[OIII]5007\AA$']            = 5007.21
 obj_lines['8'][r'$[SIII]9069\AA$']            = 6312
 obj_lines['8'][r'$HeI5876\AA$']               = 5876
 obj_lines['8'][r'$[SIII]6312\AA$']            = 6312
-obj_lines['8'][r'$[NII]6548\AA$']             = 6548
+#obj_lines['8'][r'$[NII]6548\AA$']             = 6548
 obj_lines['8'][r'$H\alpha$']                  = 6563
-obj_lines['8'][r'$[NII]6584\AA$']             = 6584.0
-obj_lines['8'][r'$[NII]6584\AA$']             = 6584.0
+#obj_lines['8'][r'$[NII]6584\AA$']             = 6584.0
 obj_lines['8'][r'$HeI6678\AA$']               = 6678.0
 obj_lines['8'][r'$[SII]6716\AA$']             = 6716.0
 obj_lines['8'][r'$[SII]6731\AA$']             = 6731.0
@@ -64,12 +56,10 @@ obj_lines['8'][r'$[SIII]9069\AA$']            = 9069
 obj_lines['8'][r'$[SIII]9531\AA$']            = 9531
 obj_lines['SHOC579']['Balmer jump']           = 3646.0
 obj_lines['SHOC579'][r'$[OII]3726\AA$']       = 3726.0
-obj_lines['SHOC579'][r'$[OII]3728\AA$']       = 3728.0
+obj_lines['SHOC579'][r'$[OII]3729\AA$']       = 3728.0
 obj_lines['SHOC579'][r'$H\delta$']            = 4101.68
 obj_lines['SHOC579'][r'$HeI4026\AA$']         = 4026.68
 obj_lines['SHOC579'].update(obj_lines['8'])
-
-
 
 ak = lineid_plot.initial_annotate_kwargs()
 # ak['arrowprops']['arrowstyle'] = "->"
@@ -78,10 +68,25 @@ ak['rotation'] = 90
 print ak
 
 pk = lineid_plot.initial_plot_kwargs()
-pk['linewidth'] = 0.8
+pk['linewidth'] = 0.5
+
 print pk
 
+factor_norm = 1e-15
+
 rcParams.update(size_dict)
+fig = plt.figure()
+
+format_plot = {'8' : {}, 'SHOC579' : {}}
+format_plot['8']['xlims']           = {'left': 4300, 'right': 9800}
+format_plot['SHOC579']['xlims']     = {'left': 3500, 'right': 9800}
+format_plot['8']['ylims']           = {'bottom': -2e-16/factor_norm, 'top': 3.5e-15/factor_norm}
+format_plot['SHOC579']['ylims']     = {'bottom': -2e-16/factor_norm, 'top': 3e-15/factor_norm}
+
+format_plot['8']['OffsetImage']         = {'zoom':0.25}
+format_plot['SHOC579']['OffsetImage']   = {'zoom':0.25}
+format_plot['8']['AnnotationBbox']       = {'xy':(8635.0, 2.65), 'xybox':(0., 0.), 'xycoords':'data', 'boxcoords':"offset points", "pad":0.1}
+format_plot['SHOC579']['AnnotationBbox'] = {'xy':(8625.0, 2.27),'xybox':(0., 0.), 'xycoords':'data', 'boxcoords':"offset points", "pad":0.1}
 
 #Loop through files
 for i in range(len(catalogue_df.index)):
@@ -100,7 +105,6 @@ for i in range(len(catalogue_df.index)):
         red_fits            = catalogue_df.iloc[i].Red_file
         fits_file           = catalogue_df.iloc[i].reduction_fits
 
-        #Get reduce spectrum data
         Wave_O, Int_O, ExtraData_T = dz.get_spectra_data(fits_file)
         Wave_N, Int_N, ExtraData_N = dz.get_spectra_data(ouput_folder + objName + nebular_exten)
         Wave_S, Int_S, ExtraData_S = dz.get_spectra_data(ouput_folder + objName + Stellar_ext)    
@@ -112,48 +116,27 @@ for i in range(len(catalogue_df.index)):
         line_wave       = obj_lines[objName].values()
         line_label1     = obj_lines[objName].keys()
 
-        # lim                     = 8e-15
-        # idx_greater             = Int_O > 8e-15
-        # Int_O[idx_greater]      = 8e-15
-        fig, ax = lineid_plot.plot_line_ids(Wave_O, Int_O, line_wave, line_label1, annotate_kwargs=ak, plot_kwargs=pk)
-        #ax.set_ylim(top=lim)
+        plt.plot(Wave_O, Int_O/factor_norm)
+        ax = plt.gca()
+        ax.set_ylim(**format_plot[objName]['ylims'])
+        ax.set_xlim(**format_plot[objName]['xlims'])
 
-        arr_hand = read_png('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SHOC579_invert.png')
-        Image_Frame = OffsetImage(arr_hand, zoom=0.25)
-        ab = AnnotationBbox(Image_Frame, [0,0],
-            xybox=(20,-20),
-            xycoords='data',
-            boxcoords='axes fraction')
+        lineid_plot.plot_line_ids(Wave_O, Int_O/factor_norm, line_wave, line_label1, ax = ax, annotate_kwargs=ak, plot_kwargs=pk)
+
+        # Annotate the 2nd position with another image (a Grace Hopper portrait)
+        fn = get_sample_data('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/{}_SDSS_invert.png'.format(objName), asfileobj=False)
+        arr_img = plt.imread(fn, format='png')
+
+        imagebox = OffsetImage(arr_img, **format_plot[objName]['OffsetImage'])
+        imagebox.image.axes = ax
+        ab = AnnotationBbox(imagebox, **format_plot[objName]['AnnotationBbox'])
+
         ax.add_artist(ab)
-        ax.update({'xlabel':r'Wavelength $(\AA)$', 'ylabel':'Flux ' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$'})
+        ax.update({'xlabel':r'Wavelength $(\AA)$', 'ylabel':'Flux ' + r'$(10^{-15} erg\,cm^{-2} s^{-1} \AA^{-1})$'})
 
-        #, 'axes.labelsize':20, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':20, 'ytick.labelsize':20
-        #dz.Axis.set_ylim(top=8e-15)
-        #Set titles and legend
-        #PlotTitle = ''
-        #dz.FigWording(r'Wavelength $(\AA)$', 'Flux' + r'$(erg\,cm^{-2} s^{-1} \AA^{-1})$', PlotTitle, loc='upper right', ncols_leg=2)
+        # dz.display_fig()
+        plt.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/{}_label_plot.png'.format(objName), dpi=150, bbox_inches='tight')
+        plt.cla()
 
-        dz.display_fig()
-        # plt.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/{}_label_plot.png'.format(objName), dpi=150, bbox_inches='tight')
-
-
-        # >> > import numpy as np
-        # >> > from matplotlib import pyplot as plt
-        # >> > import lineid_plot
-        #
-        # >> > wave = 1240 + np.arange(300) * 0.1
-        # >> > flux = np.random.normal(size=300)
-        #
-        # >> > line_wave = [1242.80, 1260.42, 1264.74, 1265.00, 1265.2, 1265.3, 1265.35]
-        # >> > line_label1 = ['N V', 'Si II', 'Si II', 'Si II', 'Si II', 'Si II', 'Si II']
-        #
-        # >> > lineid_plot.plot_line_ids(wave, flux, line_wave, line_label1)
-        # >> > plt.show()
-
-
-
-
-        #dz.savefig('/home/vital/Dropbox/Astrophysics/Seminars/Stasinska conference/' + objName + '_TwOarms')
-        
 #-----------------------------------------------------------------------------------------------------
 print 'All data treated', dz.display_errors()

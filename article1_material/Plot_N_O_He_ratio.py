@@ -1,6 +1,5 @@
 from dazer_methods  import Dazer
-from numpy          import nanmean, nanstd, mean, nan as np_nan
-from uncertainties  import ufloat, unumpy, umath
+from uncertainties  import unumpy
 import pandas as pd
  
 #Generate dazer object
@@ -27,6 +26,8 @@ N_O_ratio = N_values/O_values
 
 dz.data_plot(unumpy.nominal_values(HeII_HI), unumpy.nominal_values(N_O_ratio), label = '', markerstyle='o', x_error=unumpy.std_devs(HeII_HI), y_error=unumpy.std_devs(N_O_ratio))
 dz.plot_text(unumpy.nominal_values(HeII_HI), unumpy.nominal_values(N_O_ratio), text=objects, x_pad=1.005, y_pad=1.01)
+dz.Axis.set_yscale('log')
+
 
 dz.FigWording(r'y', r'$N/O$', '')
 # dz.display_fig()

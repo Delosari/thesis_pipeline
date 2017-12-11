@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import lineid_plot
+from collections import OrderedDict
 from dazer_methods import Dazer
 from numpy import linspace, zeros, hstack
 from scipy.interpolate import interp1d
@@ -23,8 +25,21 @@ dz.FigConf(plotSize = size_dict)
 
 #Reddening properties
 R_v = 3.4
-red_curve = 'G03'
+red_curve = 'G03_average'
 cHbeta_type = 'cHbeta_reduc'
+
+obj_lines = {}
+obj_lines['SHOC579'] = OrderedDict()
+obj_lines['SHOC579'][r'Balmer jump'] = (3646.0, 2.2e-16)
+obj_lines['SHOC579'][r'$HI_{11}\lambda3770\AA$'] = (3765.0, 3.8e-16)
+
+
+ak = lineid_plot.initial_annotate_kwargs()
+ak['arrowprops']['relpos'] = (0.5, 0.0)
+ak['rotation'] = 90
+
+pk = lineid_plot.initial_plot_kwargs()
+pk['linewidth'] = 0.5
 
 #Loop through files
 for i in range(len(catalogue_df.index)):
@@ -76,7 +91,7 @@ for i in range(len(catalogue_df.index)):
         dz.Axis.set_xlim(3550, 10000)
         
         axins2 = zoomed_inset_axes(dz.Axis, zoom=16, loc=7)
-        axins2.step(Wave_O, Int_O, label='Observed spectrum') #, linestyle='--', color=colorVector['dark blue'], where = 'mid')       
+        axins2.step(Wave_O, Int_O, label='Observed spectrum') #, linestyle='--', color=colorVector['dark blue'], where = 'mid')
         axins2.step(Wave_N, Int_N, label='Nebular continuum',linestyle=':') #,color=colorVector['orangish'], where = 'mid', linewidth=0.75)
         axins2.step(Wave_S, Int_S, label='Stellar continuum',linestyle='--') #,color=colorVector['orangish'], where = 'mid', linewidth=0.75)
         
@@ -89,6 +104,15 @@ for i in range(len(catalogue_df.index)):
         axins2.get_xaxis().set_visible(False)
         axins2.get_yaxis().set_visible(False)
 
+        # line_wave       = obj_lines[objName].values()
+        # line_label1     = obj_lines[objName].keys()
+        # lineid_plot.plot_line_ids(Wave_O, Int_O, line_wave, line_label1, ax = axins2, annotate_kwargs=ak, plot_kwargs=pk)
+
+        for feature in obj_lines[objName]:
+            x_coord, y_coord = obj_lines[objName][feature][0], obj_lines[objName][feature][1]
+            axins2.text(x_coord, y_coord, feature, {'ha': 'left', 'va': 'bottom'}, rotation=65, fontsize=13)
+
+        #dz.display_fig()
         dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/SHOC579_continua_detail')
 #-----------------------------------------------------------------------------------------------------
 print 'All data treated', dz.display_errors()
