@@ -10,22 +10,25 @@ sim_name            = sim_model + sim_components
 params_list         = ['He1_abund', 'T_He', 'T_low', 'ne','tau','cHbeta','S2_abund','S3_abund','O2_abund','O3_abund', 'N2_abund', 'Ar3_abund', 'Ar4_abund', 'sigma_star', 'Av_star']
 burning             = 7000
 
-#TODO Cambiar esto por un archivo de texto
+# TODO Cambiar esto por un archivo de texto (O si se mete en un diccionario salvarlo en un archivo con los outputs)
 
-# Simulation configuration
-sim_conf = {'ssp_type':             'starlight',
-            'ssp_folder':           '/home/vital/Starlight/Bases/',
-            'ssp_conf_file':        '/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
-            'temp_grid':            [5000, 25000, 10],
+# Simulation observation
+sim_conf = {'temp_grid':            [5000, 25000, 10],
             'den_grid':             [0, 1000, 5],
             'high_temp_ions':       ['He', 'He1', 'He2', 'O3', 'Ar4'],
             'R_v':                  3.4,
             'reddenig_curve':       'G03_average'}
 
 # Simulation object data
-synth_data = {'wavelengh_limits':   [3600,6900],
+synth_data = {'emission_component': True,
+            'nebular_component':    True,
+            'stellar_component':    True,
+            'wavelengh_limits':     [3600,6900],
             'resample_inc':         1,
             'norm_interval':        [5100,5150],
+            'ssp_type':             'starlight', # TODO In here we will add "test" for the pip
+            'ssp_folder':           '/home/vital/Starlight/Bases/',
+            'ssp_conf_file':        '/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
             'obj_mask_file':        '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_linesMask.txt',
             'obj_ssp_coeffs_file':  '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt',
             'obj_lines_file':       '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objlines.txt',
@@ -39,6 +42,7 @@ specS   = SpecSynthesizer(**sim_conf)
 
 # Generate the synthetic data
 specS.gen_synth_obs(**synth_data)
+
 
 
 
