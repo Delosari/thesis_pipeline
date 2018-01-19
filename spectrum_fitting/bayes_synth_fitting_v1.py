@@ -2,47 +2,75 @@ import numpy as np
 from dazer_methods import Dazer
 from lib.Astro_Libraries.spectrum_fitting.multi_comp_v1 import SpecSynthesizer
 
-iterat, burn, thin  = 15000, 0, 1
-sim_model           = 'MenosLineas_v2'
-sim_components      = '_neb_stars_Abunds'
-obs_metals          = ['H1', 'He1', 'S2', 'S3', 'O2', 'O3', 'N2', 'Ar3', 'Ar4'] #TODO ions should be discovered from the lines labels
-sim_name            = sim_model + sim_components
-params_list         = ['He1_abund', 'T_He', 'T_low', 'ne','tau','cHbeta','S2_abund','S3_abund','O2_abund','O3_abund', 'N2_abund', 'Ar3_abund', 'Ar4_abund', 'sigma_star', 'Av_star']
-burning             = 7000
-
-# TODO Cambiar esto por un archivo de texto (O si se mete en un diccionario salvarlo en un archivo con los outputs)
+a = {'a':1, 'b':2}
+b = a
+b['c'] = 3
 
 # Simulation observation
-sim_conf = {'temp_grid':            [5000, 25000, 10],
-            'den_grid':             [0, 1000, 5],
-            'high_temp_ions':       ['He', 'He1', 'He2', 'O3', 'Ar4'],
-            'R_v':                  3.4,
-            'reddenig_curve':       'G03_average'}
+sim_conf = {'temp_grid'             :[5000, 25000, 10],
+            'den_grid'              :[0, 1000, 5],
+            'high_temp_ions'        :['He1','He2','O3','Ar4'],
+            'R_v'                   :3.4,
+            'reddenig_curve'        :'G03_average'}
+
+# Stellar library data
+starlight_ssp = {'ssp_lib_type'     :'starlight',  # TODO In here we will add "test" for the pip
+                'data_folder'       :'/home/vital/Starlight/Bases/',
+                'data_file'         :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt'}
 
 # Simulation object data
-synth_data = {'emission_component': True,
-            'nebular_component':    True,
-            'stellar_component':    True,
-            'wavelengh_limits':     [3600,6900],
-            'resample_inc':         1,
-            'norm_interval':        [5100,5150],
-            'ssp_type':             'starlight', # TODO In here we will add "test" for the pip
-            'ssp_folder':           '/home/vital/Starlight/Bases/',
-            'ssp_conf_file':        '/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
-            'obj_mask_file':        '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_linesMask.txt',
-            'obj_ssp_coeffs_file':  '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt',
-            'obj_lines_file':       '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objlines.txt',
-            'obj_properties_file':  '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objProperties.txt',
-            'error_recomb_lines':   0.02,
-            'error_collexc_lines':  0.02}
+synth_data = {'emission_component'  :True,
+            'nebular_component'     :True,
+            'stellar_component'     :True,
+            'wavelengh_limits'      :[3600,6900],
+            'resample_inc'          :1,
+            'norm_interval'         :[5100,5150],
+            'norm_factor'           :100,
+            'input_ions'            :['H1','He1','He2','O2','O3','Ar3','Ar4','S2','S3','N2'],
+            'output_folder'         :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
+            'obj_mask_file'         :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_linesMask.txt',
+            'obj_ssp_coeffs_file'   :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt',
+            'obj_lines_file'        :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objlines.txt',
+            'obj_properties_file'   :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objProperties.txt',
+            'error_recomb_lines'    :0.02,
+            'error_collexc_lines'   :0.02}
+
+# Real object data
+obj_data = {'address_fits'          :None,
+            'address_spectrum'      :None,
+            'wavelengh_limits'      :[3600,6900],
+            'resample_inc'          :1,
+            'norm_interval'         :[5100, 5150],
+            'input_ions'            :['H1','He1','He2','O2','O3','Ar3','Ar4','S2','S3','N2'],
+            'T_low'                 :'',
+            'T_high'                :'',
+            'sigma_gas'             :'',
+            'cHbeta'                :'',
+            'obj_lines_file'        :'',
+            'obj_mask_file'         :'',
+            'z_star'                :0.0}
 
 # Generate dazer object
 dz      = Dazer()
 specS   = SpecSynthesizer(**sim_conf)
 
-# Generate the synthetic data
-specS.gen_synth_obs(**synth_data)
+#Import stellar library
+ssp_starlight = specS.import_ssp_library(**starlight_ssp)
+synth_data['ssp_lib_dict'] = ssp_starlight
 
+# Generate the synthetic data
+synth_observation = specS.gen_synth_obs(**synth_data)
+
+#Run the fit
+fit_conf    =   {'model_name'           :'Remaking_v1' + '_neb_stars_Abunds',
+                'iterations'            :15000,
+                'burn'                  :7000,
+                'thin'                  :1,
+                'fitting_components'    :['emission_component', 'nebular_component', 'stellar_component'],
+                'params_list'           :['He1_abund', 'T_He', 'T_low', 'ne','tau','cHbeta','S2_abund','S3_abund','O2_abund',\
+                                        'O3_abund', 'N2_abund', 'Ar3_abund', 'Ar4_abund', 'sigma_star', 'Av_star']}
+
+specS.fit_observation(obs_data = synth_observation, ssp_data = ssp_starlight, **fit_conf)
 
 
 

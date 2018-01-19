@@ -1,5 +1,5 @@
 variable_name	variable_magnitude	
-z_star		0.0154
+z_star		0.00
 sigma_star	1.254
 Av_star		0.754
 sigma_gas	2.255
@@ -11,7 +11,8 @@ cHbeta		0.1
 TSIII		15600.0
 TSIII_ERROR	700.0
 nSII		130.0
-nSII_error	50.0	
+nSII_error	50.0
+H1_abund	1.0	
 He1_abund	0.085
 He2_abund	0.0
 O2_abund	0.00025
