@@ -41,7 +41,7 @@ def light_fraction_plot(Sl_OutputFolder, Sl_OutputFile, objName, parameter, oupu
     #Generate the data from the starlight file
     dz.populations_histogram(Sl_OutputFolder, Sl_OutputFile, parameter)
     
-    dz.Axis.axhline(ratio_flux, label = 'Nebular to stellar flux fraction', linestyle='--', color='#D55E00')
+    dz.Axis.axhline(ratio_flux, label = 'Nebular fraction', linestyle='--', color='#D55E00')
     
     # Change the axis format to replicate the style of Dani Miralles
     dz.Axis.set_yscale('log')
@@ -53,8 +53,7 @@ def light_fraction_plot(Sl_OutputFolder, Sl_OutputFile, objName, parameter, oupu
     plot_Title  = ''#'Galaxy ' + objName + ' SSP synthesis light fraction' 
     plot_xlabel = r'$log(Age)$'
     plot_ylabel = r'Light fraction %'
-      
-    dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = (0.56,0.51), sort_legend=True)       
+    dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = 'best', sort_legend=True, ncols_leg=4)
     
     #Save the data to the Catalogue folder
     output_pickle = '{objFolder}{objCode}_{ext}'.format(objFolder='/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/', objCode=objName, ext='LightFraction')
@@ -81,13 +80,14 @@ def mass_fraction_plot(Sl_OutputFolder, Sl_OutputFile, parameter, ouput_folder, 
     plot_xlabel = r'$log(Age)$'
     plot_ylabel = r'Mass fraction (%)'
       
-    dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = 'best', sort_legend=True)
+    dz.FigWording(plot_xlabel, plot_ylabel, plot_Title, loc = 'best', sort_legend=True, ncols_leg=4)
          
     #Save the data to the Catalogue folder
     output_pickle = '{objFolder}{objCode}_{ext}'.format(objFolder='/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/', objCode=objName, ext='MassFraction')
     dz.save_manager(output_pickle, save_pickle = False)
        
     return
+
 #Declare objects
  
 dz = Dazer()
@@ -99,7 +99,8 @@ catalogue_df    = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_ob
 Sl_OutputFolder = '/home/vital/Starlight/Output/'
  
 #Define plot frame and colors
-size_dict = {'axes.labelsize':24, 'legend.fontsize':18, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
+size_dict = {'axes.labelsize':35, 'legend.fontsize':19, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':30, 'ytick.labelsize':30}
+# size_dict = {'axes.labelsize':24, 'legend.fontsize':18, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
 dz.FigConf(plotSize = size_dict)
 
 #Loop through files

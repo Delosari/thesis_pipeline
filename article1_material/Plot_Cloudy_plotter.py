@@ -108,7 +108,8 @@ colors_list = ['#0072B2',
 markers     = ['o','s','^','x'] 
 
 #Declare the number of colors
-size_dict = {'axes.labelsize':24, 'legend.fontsize':24, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
+
+size_dict = {'axes.labelsize':35, 'legend.fontsize':26, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':30, 'ytick.labelsize':30}
 dz.FigConf(plotSize = size_dict)
 
 #Define script name and location
@@ -176,7 +177,7 @@ dz.data_plot(x_lineal, y_lineal, label='Linear fitting', color = 'black', linest
 # #Plot fitting formula
 formula = r"$log\left(Ar^{{+2}}/Ar^{{+3}}\right) = {m} \cdot log\left(S^{{+2}}/S^{{+3}}\right) + {n}$".format(m=round(Lineal_parameters['lineal_slope'].value,3),
                                                                                                             n=round(Lineal_parameters['lineal_intercept'].value, 3))
-dz.Axis.text(0.35, 0.15, formula, transform=dz.Axis.transAxes, fontsize=20) 
+dz.Axis.text(0.30, 0.15, formula, transform=dz.Axis.transAxes, fontsize=28)
   
 #Plot wording
 xtitle  =   r'$log\left(S^{{+2}}/S^{{+3}}\right)$'
@@ -185,7 +186,7 @@ title   =   ''#'Argon - Sulfur ionic abundances\nfor a Z, Mass, log(t) cluster g
 dz.FigWording(xtitle, ytitle, title, loc='upper left')
   
 #Display figure
-# dz.display_fig()
+#dz.display_fig()
 dz.savefig(output_address = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/sulfur_argon_ionicAbundances', extension='.png')
 
 print 'Data treated otro'

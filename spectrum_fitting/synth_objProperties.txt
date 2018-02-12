@@ -3,8 +3,9 @@ z_star		0.00
 sigma_star	1.254
 Av_star		0.754
 sigma_gas	2.255
-Hbeta_Flux	1e4
-n_e		2.255
+flux_hbeta	5e-14
+eqw_hbeta	155.0
+n_e		145.0
 tau		1.0
 T_low		15500.0
 cHbeta		0.1

@@ -19,7 +19,7 @@ Stellar_ext             = '_StellarContinuum.fits'
 emitting_ext            = '_Emission.fits'
 
 #Define plot frame and colors
-size_dict = {'figure.figsize':(26,10),'axes.labelsize':20, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':20, 'ytick.labelsize':20}
+size_dict = {'figure.figsize':(26,10),'axes.labelsize':28, 'legend.fontsize':28, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':28, 'ytick.labelsize':28}
 # dz.FigConf(plotSize = size_dict)
 
 #Reddening properties

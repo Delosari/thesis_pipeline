@@ -65,7 +65,7 @@ SIII_theo = 2.469
 H7_H8_ratio_theo = 1.98
 
 #Set figure format
-size_dict = {'figure.figsize': (16, 10), 'axes.labelsize':20, 'legend.fontsize':18, 'font.family':'Times New Roman', 'mathtext.default':'regular'}
+size_dict = {'figure.figsize': (16, 10), 'axes.labelsize':20, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':20, 'ytick.labelsize':20}
 dz.FigConf(plotStyle='seaborn-colorblind', plotSize = size_dict, Figtype = 'Grid_size', n_columns = 1, n_rows = 2)
 
 #Sulfur lines to plot
@@ -258,10 +258,10 @@ for i in range(len(catalogue_df.index)):
             else:
                 dz.ax1.set_ylim(0.005 * mean_flux, 20 * mean_flux)
             
-            dz.insert_image('/home/vital/Downloads/obj08_SDSS_image_color.png', Image_Coordinates = [0.40,0.875], Zoom=0.25, Image_xyCoords = 'axes fraction', axis_plot=dz.ax1)
+            dz.insert_image('/home/vital/Downloads/obj08_SDSS_image_color.png', Image_Coordinates = [0.50,0.80], Zoom=0.25, Image_xyCoords = 'axes fraction', axis_plot=dz.ax1)
             
-            #dz.savefig(image_address, extension='.png') 
-            dz.display_fig()
+            dz.savefig(image_address, extension='.png')
+            #dz.display_fig()
             
 #         output_pickle = '{objFolder}{stepCode}_{objCode}_{ext}'.format(objFolder=ouput_folder, stepCode=script_code, objCode=objName, ext='Telluric correction')
 #         dz.save_manager(output_pickle, save_pickle = True)

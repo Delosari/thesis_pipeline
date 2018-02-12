@@ -1,6 +1,6 @@
 #Perform the linear regression---------------------------
 from dazer_methods import Dazer
-from numpy import nanmean, nanstd, min as np_min, linspace,  max as np_max
+from numpy import nanmean, nanstd, min as np_min, linspace,  max as np_max, arange
 from uncertainties import ufloat
 from uncertainties import unumpy
 from lib.Math_Libraries.FittingTools import bces_regression
@@ -9,7 +9,7 @@ from lib.Math_Libraries.FittingTools import bces_regression
 dz = Dazer()
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':24, 'legend.fontsize':24, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
+size_dict = {'axes.labelsize':35, 'legend.fontsize':24, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':30, 'ytick.labelsize':30}
 dz.FigConf(plotSize = size_dict)
 
 #Load catalogue dataframe
@@ -43,16 +43,18 @@ y_fit = regr_dict['m'][reg_code] * x_regression + regr_dict['n'][reg_code]
 dz.data_plot(x_regression, y_fit, 'Linear fit', linestyle = '-')
  
 dz.data_plot(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array), 'HII galaxies', markerstyle='o',  x_error=unumpy.std_devs(TeOIII_array),  y_error=unumpy.std_devs(TeSIII_array), color='tab:blue')
-dz.plot_text(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array),  objects)
+dz.plot_text(unumpy.nominal_values(TeOIII_array), unumpy.nominal_values(TeSIII_array),  objects, fontsize = 17)
   
 dz.data_plot(x_regression, y_regression_Garnet92,   'Garnett (1992)', linestyle = ':')
 dz.data_plot(x_regression, y_regression_EpmDiaz05,  r'$P\'erez$-Montero et al (2005)', linestyle = '--')
 dz.data_plot(x_regression, y_regression_Epm2014,    r'$P\'erez$-Montero (2014)', linestyle = '-.')
-  
+
+dz.Axis.yaxis.set_ticks(arange(8000, 26000, 4000))
+
 Title       = ''#r'Sulfur versus Oxygen temperature comparison'
 y_Title     = r'$T_{e}[SIII]\,(K)$'
 x_Title     = r'$T_{e}[OIII]\,(K)$'
 dz.FigWording(x_Title, y_Title, Title)
-# dz.display_fig()
+#dz.display_fig()
 dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/temperatures_comparison')
 

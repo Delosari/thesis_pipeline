@@ -35,6 +35,7 @@ def residuals_lin3(p, c):
     x, y = c
     mA, mB, mC, n = p
     return (y - linear_model3(x, mA, mB, mC, n))
+    return mA*x[0] + mB*x[1] + mC*x[2] + n
 
 def latex_float(f):
     float_str = "{0:.2g}".format(f)
@@ -49,7 +50,7 @@ dz = Dazer()
 script_code = dz.get_script_code()
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':24, 'legend.fontsize':20, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
+size_dict = {'axes.labelsize':38, 'legend.fontsize':28, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':34, 'ytick.labelsize':34}
 dz.FigConf(plotSize = size_dict)
 
 #Load catalogue dataframe
@@ -234,14 +235,14 @@ for i in range(len(Regresions_dict['Regressions'])):
 
     for ii in range(len(y_NO)):
         x_coord, y_coord = nominal_values(x_NO)[ii], nominal_values(y_NO)[ii]
-        dz.Axis.text(x_coord, y_coord, quickref_NO[ii], {'ha': 'left', 'va': 'bottom'}, rotation=65, fontsize=11)
+        dz.Axis.text(x_coord, y_coord, quickref_NO[ii], {'ha': 'left', 'va': 'bottom'}, rotation=65, fontsize=18)
 
     #Plot WMAP prediction
-    dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color = dz.colorVector['pink'], label='WMAP prediction', markerstyle='o', x_error=WMAP_coordinates[0].std_dev, y_error=WMAP_coordinates[1].std_dev)
+    dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color = dz.colorVector['pink'], label='Planck prediction', markerstyle='o', x_error=WMAP_coordinates[0].std_dev, y_error=WMAP_coordinates[1].std_dev)
 
     #plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
-    dz.Axis.set_ylim(0,0.5)
-    dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], '', loc='best')
+    dz.Axis.set_ylim(0,0.4)
+    dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], '', loc='lower center', ncols_leg=2)
     #dz.display_fig()
     output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
     dz.save_manager(output_pickle, save_pickle = False)
@@ -346,7 +347,6 @@ dz.pdf_insert_table(headers)
 last_key = regr_dict.keys()[-1]
 for key in regr_dict:
     magnitude_entry = r'${}\pm{}$'.format(round_sig(regr_dict[key][0],3,scien_notation=False),round_sig(regr_dict[key][1],1,scien_notation=False))
-    print 'troleandome',  str(int(regr_dict[key][2]))
     row = [key, magnitude_entry, str(int(regr_dict[key][2]))]
     dz.addTableRow(row, last_row = False if last_key != last_key else True)
 dz.table.add_hline()

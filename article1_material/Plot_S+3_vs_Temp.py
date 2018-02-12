@@ -17,7 +17,7 @@ idcs            = (pd.notnull(catalogue_df.TeSIII_emis2nd)) & (pd.notnull(catalo
 idcs_oxygen     = (pd.notnull(catalogue_df.OI_HI_emis2nd)) & (pd.notnull(catalogue_df.OII_HII_emis2nd)) & (catalogue_df.quick_index.notnull())
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':24, 'legend.fontsize':22, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':22, 'ytick.labelsize':22}
+size_dict = {'axes.labelsize':35, 'legend.fontsize':26, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':30, 'ytick.labelsize':30}
 dz.FigConf(plotSize = size_dict)
 
 x_values        = catalogue_df.loc[idcs].TeSIII_emis.values
@@ -48,17 +48,18 @@ for i in range(len(objects)):
     t_lows_thua_err[i] = catalogue_df.loc[obj, temp_label].std_dev 
       
 dz.data_plot(T_low_array, unumpy.nominal_values(y_values), label = r'Argon $ICF(S^{3+})$', markerstyle='o', x_error=T_low_err_array, y_error=unumpy.std_devs(y_values))
-dz.plot_text(unumpy.nominal_values(T_low_array), unumpy.nominal_values(y_values), text=quick_reference,x_pad=1.005,y_pad=1.005)
+dz.plot_text(unumpy.nominal_values(T_low_array), unumpy.nominal_values(y_values), text=quick_reference,x_pad=1.005,y_pad=1.005, fontsize=18)
 
 #dz.data_plot(t_lows_thua, unumpy.nominal_values(ICFs_thuan), label = r'Oxygen $ICF(S^{3+})$ prediction (Thuan et al 1995)', color = '#009E73', markerstyle='^', x_error=t_lows_thua_err, y_error=unumpy.std_devs(ICFs_thuan))
 
 dz.data_plot(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_values), color=dz.colorVector['orangish'], label = r'$ICF(S^{3+})$ from IR (Dors 2016)', markerstyle='x', x_error=unumpy.std_devs(x_IR_values), y_error=unumpy.std_devs(y_IR_values))
-dz.plot_text(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_values), text=objectsIR,y_pad=1.005 )
+dz.plot_text(unumpy.nominal_values(x_IR_values), unumpy.nominal_values(y_IR_values), text=objectsIR, fontsize=18)
 
-dz.data_plot(unumpy.nominal_values(x_values), unumpy.nominal_values(y_values), label= '', x_error=unumpy.std_devs(x_values), y_error=unumpy.std_devs(y_values))
- 
+# dz.data_plot(unumpy.nominal_values(x_values), unumpy.nominal_values(y_values), label= '', x_error=unumpy.std_devs(x_values), y_error=unumpy.std_devs(y_values))
+
 dz.FigWording(r'$T_{low} (K)$', r'$ICF(S^{+3})$', '', loc='best')
- 
+
+#dz.display_fig()
 dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/ICF_S+3')
 
 
