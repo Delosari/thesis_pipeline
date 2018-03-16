@@ -2,7 +2,9 @@ from dazer_methods import Dazer
 from uncertainties import unumpy
 from collections import OrderedDict
 from pylatex import Package, NoEscape
-
+from numpy import isnan
+from pandas import isnull
+from uncertainties import UFloat
 #Import library object
 dz = Dazer()
 
@@ -11,8 +13,8 @@ catalogue_df = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_obser
 dz.quick_indexing(catalogue_df)
 
 #Define data to load
-ext_data        = '_emis2nd'
-pdf_address     = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/tables/AbundancesTable'
+ext_data = '_emis2nd'
+pdf_address = '/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/tables/AbundancesTable'
 
 #Headers
 headers_dic = OrderedDict()
@@ -24,10 +26,10 @@ headers_dic['NI_HI']    = r'$12 + log\left(\nicefrac{N}{H}\right)$'
 headers_dic['SI_HI']    = r'$12 + log\left(\nicefrac{S}{H}\right)$'
 
 properties_list = map(( lambda x: x + ext_data), headers_dic.keys())
-headers_format  = ['HII Galaxy'] + headers_dic.values()
+headers_format = ['HII Galaxy'] + headers_dic.values()
 
 #Create a new list for the different entries
-metals_list   = properties_list[:]
+metals_list = properties_list[:]
 
 del metals_list[metals_list.index('HeI_HI' + ext_data)]
 del metals_list[metals_list.index('Ymass_O' + ext_data)]
@@ -38,7 +40,10 @@ del metals_list[metals_list.index('Ymass_S' + ext_data)]
 # dz.pdfDoc.packages.append(Package('nicefrac'))
 # dz.pdfDoc.packages.append(Package('pifont'))
 # dz.pdfDoc.append(NoEscape(r'\newcommand{\cmark}{\ding{51}}')) 
-# dz.pdfDoc.append(NoEscape(r'\newcommand{\xmark}{\ding{55}}')) 
+# dz.pdfDoc.append(NoEscape(r'\newcommand{\xmark}{\ding{55}}'))
+
+# ['OI_HI_emis2nd', 'NI_HI_emis2nd', 'SI_HI_emis2nd']
+# catalogue_df[metal_x].notnull()
 
 #Set the pdf format
 dz.pdf_insert_table(headers_format)
@@ -48,14 +53,18 @@ for objName in catalogue_df.loc[dz.idx_include].index:
     regressions_employed = []
     for element in ['O', 'N', 'S']:
         validity_entry = catalogue_df.loc[objName, element + '_valid']
-        if validity_entry not in ['ignored', 'NO_excess', 'Wide Component']:
-            regressions_employed.append(element)
+        element_abundance_key = '{}I_HI_emis2nd'.format(element)
+        element_abundance_check = isnull(catalogue_df.loc[objName, element_abundance_key])
+        print objName, element, element_abundance_check
+        if element_abundance_check is False:
+            if (validity_entry not in ['ignored', 'NO_excess', 'Wide Component']):
+                regressions_employed.append(element)
+        else:
+            print 'Fallo', objName, element
     name_superscript = r'\textsuperscript{{{regrens}}}'.format(regrens = ', '.join(regressions_employed))
            
     entry_name = r'{text}{expo}'.format(text=catalogue_df.loc[objName].quick_index, expo=name_superscript)
-    
-    print entry_name
-    
+
     objData         = catalogue_df.loc[objName]
     abundValues     = objData[metals_list].values
     objData[metals_list] = 12.0 + unumpy.log10(abundValues)
@@ -63,11 +72,12 @@ for objName in catalogue_df.loc[dz.idx_include].index:
     HeI_HI_entry    = dz.format_for_table(catalogue_df.loc[objName, 'HeII_HII_from_O' + ext_data], rounddig=3, rounddig_er=2)
     Ymass_O_entry   = dz.format_for_table(catalogue_df.loc[objName, 'Ymass_O' + ext_data], rounddig=3, rounddig_er=2)
     Ymass_S_entry   = dz.format_for_table(catalogue_df.loc[objName, 'Ymass_S' + ext_data], rounddig=3, rounddig_er=2)
-    
+
+    print objName, objData[['OI_HI' + ext_data]].values, objData[['OI_HI' + ext_data]].isnull().values.any(), regressions_employed
+
     row             = [entry_name] + [HeI_HI_entry, Ymass_O_entry, Ymass_S_entry]
     row             += list(objData[['OI_HI' + ext_data, 'NI_HI' + ext_data, 'SI_HI' + ext_data]].values)
-    
-            
+
     dz.addTableRow(row, last_row = False if catalogue_df.index[-1] != objName else True, rounddig=3, rounddig_er=1)
 
 # dz.generate_pdf()   

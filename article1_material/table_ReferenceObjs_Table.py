@@ -32,19 +32,20 @@ dz.pdf_insert_table(headers)
 dz.quick_indexing(catalogue_df)
 
 for objName in catalogue_df.loc[dz.idx_include].index:
-       
+
     local_refenrence = objName.replace('_','-')
     
     quick_reference = catalogue_df.loc[objName].quick_index
     
     sdss_refenrence, sdss_web, redshift, ra, dec, dichroic = catalogue_df.loc[objName, plotting_Keys].values
-    
+
     web_reference = '{slash}href{{{url}}}{{{text}}}'.format(slash='\\',url=sdss_web,text=sdss_refenrence).replace('&','\&')
     
     wht_conf = 'I' if dichroic == 7500 else 'II'
     
     #Add a new row
     row = [quick_reference, web_reference, redshift, ra, dec, wht_conf]
+
     dz.addTableRow(row, last_row = False if catalogue_df.index[-1] != objName else True)
 
 #dz.generate_pdf(clean_tex=False)
