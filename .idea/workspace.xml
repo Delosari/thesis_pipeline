@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aad44bcb-524c-4174-b8be-249ddba05685" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Thesis_Pipeline.iml" afterPath="$PROJECT_DIR$/.idea/Thesis_Pipeline.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py" afterPath="$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py" />
     </list>
     <ignored path="Thesis_Pipeline.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,7 +24,7 @@
       <file leaf-file-name="B3_Flatcombine.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Spectra_Reduction/B3_Flatcombine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
+            <state relative-caret-position="406">
               <caret line="50" column="0" lean-forward="false" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
               <folding>
                 <element signature="e#330#1993#0" expanded="false" />
@@ -39,7 +36,7 @@
       <file leaf-file-name="DZ_observation_reduction.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../dazer/bin/DZ_observation_reduction.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="47595">
+            <state relative-caret-position="55110">
               <caret line="2523" column="8" lean-forward="false" selection-start-line="2523" selection-start-column="8" selection-end-line="2523" selection-end-column="8" />
               <folding />
             </state>
@@ -49,7 +46,7 @@
       <file leaf-file-name="C0_Response_MasterFlat.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="912">
+            <state relative-caret-position="1056">
               <caret line="48" column="30" lean-forward="false" selection-start-line="48" selection-start-column="30" selection-end-line="48" selection-end-column="30" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
@@ -70,11 +67,11 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="257" />
-    <option name="y" value="157" />
-    <option name="width" value="950" />
-    <option name="height" value="789" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="1920" />
+    <option name="y" value="27" />
+    <option name="width" value="1920" />
+    <option name="height" value="1053" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -110,6 +107,17 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="thesis_pipeline" type="b2602c69:ProjectViewProjectNode" />
+              <item name="thesis_pipeline" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Changed Files">
           <expand>
@@ -131,17 +139,6 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="thesis_pipeline" type="b2602c69:ProjectViewProjectNode" />
-              <item name="thesis_pipeline" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -354,6 +351,14 @@
       <option name="presentableId" value="Default" />
       <updated>1476748247098</updated>
     </task>
+    <task id="LOCAL-00001" summary="Work 2018/03/15">
+      <created>1521218820438</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1521218820438</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -366,11 +371,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="257" y="157" width="950" height="789" extended-state="0" />
+    <frame x="1920" y="27" width="1920" height="1053" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28935698" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14453961" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46594426" sideWeight="0.50427353" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33296582" sideWeight="0.50427353" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3677911" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.4957265" order="9" side_tool="false" content_ui="tabs" />
@@ -399,11 +404,71 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Work 2018/03/15" />
+    <option name="LAST_COMMIT_MESSAGE" value="Work 2018/03/15" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Spectra_Reduction/B3_Flatcombine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#330#1993#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../dazer/bin/DZ_observation_reduction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="55110">
+          <caret line="2523" column="8" lean-forward="false" selection-start-line="2523" selection-start-column="8" selection-end-line="2523" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1056">
+          <caret line="48" column="30" lean-forward="false" selection-start-line="48" selection-start-column="30" selection-end-line="48" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Spectra_Reduction/B3_Flatcombine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#330#1993#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../dazer/bin/DZ_observation_reduction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="55110">
+          <caret line="2523" column="8" lean-forward="false" selection-start-line="2523" selection-start-column="8" selection-end-line="2523" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1012">
+          <caret line="48" column="30" lean-forward="false" selection-start-line="48" selection-start-column="30" selection-end-line="48" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Spectra_Reduction/B3_Flatcombine.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -512,7 +577,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="912">
+        <state relative-caret-position="1056">
           <caret line="48" column="30" lean-forward="false" selection-start-line="48" selection-start-column="30" selection-end-line="48" selection-end-column="30" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
@@ -522,7 +587,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../dazer/bin/DZ_observation_reduction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="47595">
+        <state relative-caret-position="55110">
           <caret line="2523" column="8" lean-forward="false" selection-start-line="2523" selection-start-column="8" selection-end-line="2523" selection-end-column="8" />
           <folding />
         </state>
@@ -530,7 +595,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Spectra_Reduction/B3_Flatcombine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="406">
           <caret line="50" column="0" lean-forward="false" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
           <folding>
             <element signature="e#330#1993#0" expanded="false" />
