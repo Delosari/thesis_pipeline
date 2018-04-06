@@ -9,8 +9,9 @@ n_e		145.0
 tau		1.0
 T_low		15500.0
 cHbeta		0.1
+cHbeta_error	0.01
 TSIII		15600.0
-TSIII_ERROR	700.0
+TSIII_error	700.0
 nSII		130.0
 nSII_error	50.0
 H1_abund	1.0	
