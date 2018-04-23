@@ -27,7 +27,7 @@ dz.quick_indexing(catalogue_df)
 
 #Reddening properties
 R_v         = 3.4
-red_curve   = 'G03'
+red_curve   = 'G03_average'
 cHbeta_type = 'cHbeta_emis'
 
 #Define data to load

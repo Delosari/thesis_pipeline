@@ -33,7 +33,7 @@ del metals_list[metals_list.index('ICF_SIV' + ext_data)]
 dz.pdf_insert_table(headers_format)
 
 for objName in catalogue_df.loc[dz.idx_include].index:
-    
+
     entry_name   = '{slash}href{{{url}}}{{{text}}}'.format(slash='\\',url=catalogue_df.loc[objName].SDSS_Web,text=catalogue_df.loc[objName].quick_index).replace('&','\&')
     
     objData     = catalogue_df.loc[objName]

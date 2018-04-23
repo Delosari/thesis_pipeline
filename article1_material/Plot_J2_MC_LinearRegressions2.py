@@ -50,7 +50,7 @@ dz = Dazer()
 script_code = dz.get_script_code()
 
 #Define plot frame and colors
-size_dict = {'axes.labelsize':38, 'legend.fontsize':28, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':34, 'ytick.labelsize':34}
+size_dict = {'figure.figsize':(18, 8), 'axes.labelsize':38, 'legend.fontsize':28, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':34, 'ytick.labelsize':34}
 dz.FigConf(plotSize = size_dict)
 
 #Load catalogue dataframe
@@ -233,17 +233,47 @@ for i in range(len(Regresions_dict['Regressions'])):
     #     x_coord, y_coord = nominal_values(x_NO)[ii], nominal_values(y_NO)[ii]
     #     dz.Axis.annotate(s=quickref_NO[ii],xy=(x_coord, y_coord), xytext=(x_coord, y_coord*1.20), **arguments_coords)
 
-    for ii in range(len(y_NO)):
-        x_coord, y_coord = nominal_values(x_NO)[ii], nominal_values(y_NO)[ii]
-        dz.Axis.text(x_coord, y_coord, quickref_NO[ii], {'ha': 'left', 'va': 'bottom'}, rotation=65, fontsize=18)
+
+    if element != 'S':
+        for ii in range(len(y_NO)):
+            x_coord, y_coord = nominal_values(x_NO)[ii], nominal_values(y_NO)[ii]
+            dz.Axis.text(x_coord, y_coord, quickref_NO[ii], {'ha': 'left', 'va': 'bottom'}, rotation=65, fontsize=18)
+    else:
+        counter = 0
+        coords_sulfur = [3, 3.5, 3.25]
+        arrows_sulfur = [3.1, 3.60, 3.35]
+        for ii in range(len(y_NO)):
+            if quickref_NO[ii] in ['SHOC592','SHOC220', 'SHOC036']:
+                x_coord, y_coord = nominal_values(x_NO)[ii], nominal_values(y_NO)[ii]
+                dz.Axis.text(x_coord, y_coord, quickref_NO[ii], {'ha': 'left', 'va': 'bottom'}, rotation=65, fontsize=18)
+
+            elif quickref_NO[ii] in ['SHOC588', 'SHOC575', 'SHOC579']:
+
+                x_coord, y_coord = nominal_values(x_NO)[ii], nominal_values(y_NO)[ii]
+
+                # dz.Axis.annotate(quickref_NO[ii], xy=(x_coord, y_coord), xycoords='data',
+                #                  xytext=(coords_sulfur[counter], 0.35), textcoords='data',
+                #                  arrowprops=dict(arrowstyle="->", lw=1.5), rotation=65, fontsize=18)
+
+                dz.Axis.annotate('', xy=(x_coord, y_coord), xycoords='data',
+                                 xytext=(arrows_sulfur[counter], 0.308), textcoords='data',
+                                 arrowprops=dict(arrowstyle="->", lw=1.5), fontsize=18)
+
+                dz.Axis.annotate(quickref_NO[ii], xy=(x_coord, y_coord), xycoords='data',
+                                 xytext=(coords_sulfur[counter], 0.35), textcoords='data',
+                                 rotation=65, fontsize=18)
+
+
+
+                counter += 1
 
     #Plot WMAP prediction
     dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color = dz.colorVector['pink'], label='Planck prediction', markerstyle='o', x_error=WMAP_coordinates[0].std_dev, y_error=WMAP_coordinates[1].std_dev)
 
     #plotTitle = r'{title}: $Y_{{P}} = {n}_{{-{lowerlimit}}}^{{+{upperlimit}}}$'.format(title = Regresions_dict['title'][i], n = round_sig(n_Median,4, scien_notation=False), lowerlimit = round_sig(n_Median-n_16th,2, scien_notation=False), upperlimit = round_sig(n_84th-n_Median,2, scien_notation=False))
-    dz.Axis.set_ylim(0,0.4)
+    dz.Axis.set_ylim(0.1,0.4)
     dz.FigWording(Regresions_dict['x label'][i], Regresions_dict['y label'][i], '', loc='lower center', ncols_leg=2)
-    #dz.display_fig()
+
     output_pickle = '{objFolder}{element}_regression_2nd'.format(objFolder=output_folder, element = element)
     dz.save_manager(output_pickle, save_pickle = False)
 

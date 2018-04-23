@@ -89,8 +89,8 @@ fit_conf = {'model_name'                :'Remaking_v1' + '_neb_stars_Abunds',
 fit_conf = {'model_name'                :'Remaking_v1' + '_only_helium',
             'obs_data'                  :synth_observation,
             'ssp_data'                  :ssp_starlight,
-            'iterations'                :15000,
-            'burn'                      :7000,
+            'iterations'                :30000,
+            'burn'                      :10000,
             'thin'                      :1,
             'output_folder'             :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
             'wavelengh_limits'          :[4200,6900],
@@ -104,3 +104,14 @@ fit_conf = {'model_name'                :'Remaking_v1' + '_only_helium',
 
 # Run fit
 specS.fit_observation(**fit_conf)
+
+
+# print specS.abund_dict['He1']
+# specS.abund_dict['He1'] = 0.09601
+# recomb_fluxes = specS.calculate_recomb_fluxes(17250.0, 59.07,
+#                                               0.1025, 0.4280, specS.abund_dict,
+#                                               specS.obj_data['recombLine_labes'],
+#                                               specS.obj_data['recombLine_ions'],
+#                                               specS.obj_data['recombLine_flambda'])
+#
+# print recomb_fluxes
