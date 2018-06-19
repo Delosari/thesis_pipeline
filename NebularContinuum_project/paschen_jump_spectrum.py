@@ -33,6 +33,7 @@ show_me_the_bits(header_1)
 wavel           = data_array_0['wavel']
 spec            = data_array_1['spec']
 sigma_spectrum  = np.sqrt(data_array_1['spec_var'])
+specw            = data_array_1['specw']
 
 print wavel
 print spec
@@ -41,7 +42,9 @@ print sigma_spectrum
 dz.data_plot(wavel, spec, label='spec key')
 # dz.data_plot(wavel, sigma_spectrum, label='sqrt(var)')
 
+
 dz.Axis.fill_between(wavel, spec-sigma_spectrum, spec+sigma_spectrum, alpha=0.5)
+dz.data_plot(wavel, specw, label='spec', linestyle=':')
 
 dz.Axis.set_yscale('log')
 

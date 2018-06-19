@@ -3,7 +3,7 @@ import json
 import ConfigParser
 from collections import OrderedDict
 
-from lib.Astro_Libraries.spectrum_fitting.multi_comp_v1 import SpecSynthesizer
+from lib.Astro_Libraries.spectrum_fitting.multi_comp_v2 import SpecSynthesizer
 
 #TODO add these as attributes of your library
 He_lines = ['He1_4026A', 'He1_4471A', 'He1_5876A', 'He1_6678A']
@@ -12,6 +12,7 @@ O_lines  = ['O3_4363A', 'O3_4959A', 'O3_5007A', 'O2_7319A', 'O2_7330A']
 S_lines  = ['S3_6312A', 'S2_6716A', 'S2_6731A', 'S3_9069A', 'S3_9531A']
 N_lines  = ['N2_6548A', 'N2_6584A']
 Ar_lines = ['Ar4_4740A', 'Ar3_7136A', 'Ar3_7751A']
+
 
 # Simulation configuration
 sim_conf = {'temp_grid'                 :[5000, 25000, 10],
