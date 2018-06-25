@@ -1,223 +1,227 @@
-import pyneb as pn
 import numpy as np
+import pyneb as pn
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+from mpl_toolkits.mplot3d import Axes3D
+from scipy.optimize import curve_fit
+from sys import exit
+from kapteyn            import kmpfit
 
-H1 = pn.RecAtom('H', 1)
-He1 = pn.RecAtom('He', 1)
-Te, ne = 12000.0, 100.0
+class EmissivitySurfaceFitter():
 
-He1.printSources()
+    def __init__(self):
 
-Hbeta = H1.getEmissivity(tem=Te, den=ne, wave=4861)
-He1_5876A = He1.getEmissivity(tem=Te, den=ne, wave=5876)
-He1_5876A_epm = (0.745 - 5.1e-5 * ne) * np.power(Te / 10000.0, 0.226 - 0.0011 * ne)
+        self.emis_eq_dict= {'S2_6717A'  : self.emisEquation_TeDe,
+                            'S2_6731A'  : self.emisEquation_TeDe,
+                            'S3_6312A'  : self.emisEquation_Te,
+                            'S3_9069A'  : self.emisEquation_Te,
+                            'S3_9531A'  : self.emisEquation_Te,
+                            'Ar4_4740A' : self.emisEquation_Te,
+                            'Ar3_7136A' : self.emisEquation_Te,
+                            'Ar3_7751A' : self.emisEquation_Te,
+                            'O3_4363A'  : self.emisEquation_Te,
+                            'O3_4959A'  : self.emisEquation_Te,
+                            'O3_5007A'  : self.emisEquation_Te,
+                            'O2_7319A'  : self.emisEquation_TeDe,
+                            'O2_7330A'  : self.emisEquation_TeDe,
+                            'N2_6548A'  : self.emisEquation_Te,
+                            'N2_6584A'  : self.emisEquation_Te,
+                            'H1_4102A'  : self.emisEquation_HI,
+                            'H1_4340A'  : self.emisEquation_HI,
+                            'H1_6563A'  : self.emisEquation_HI,
+                            'He1_4471A' : self.emisEquation_HeI,
+                            'He1_5876A' : self.emisEquation_HeI,
+                            'He1_6678A' : self.emisEquation_HeI,
+                            'He1_7065A' : self.emisEquation_HeI,
+                            'He2_4686A' : self.emisEquation_HeII}
 
-print 'Relative line emissivity comparison:'
-print He1_5876A / Hbeta
-print He1_5876A_epm
+        self.high_temp_ions = ['He1', 'He2', 'O3', 'Ar4']
 
 
-# import numpy as np
-# import pyneb as pn
-# import matplotlib.pyplot as plt
-# import matplotlib.cm as cm
-# from mpl_toolkits.mplot3d import Axes3D
-# from scipy.optimize import curve_fit
-# from sys import exit
-# from kapteyn            import kmpfit
-#
-# class EmissivitySurfaceFitter():
-#
-#     def __init__(self):
-#
-#         self.emis_eq_dict= {'S2_6717A'  : self.emisEquation_TeDe,
-#                             'S2_6731A'  : self.emisEquation_TeDe,
-#                             'S3_6312A'  : self.emisEquation_Te,
-#                             'S3_9069A'  : self.emisEquation_Te,
-#                             'S3_9531A'  : self.emisEquation_Te,
-#                             'Ar4_4740A' : self.emisEquation_Te,
-#                             'Ar3_7136A' : self.emisEquation_Te,
-#                             'Ar3_7751A' : self.emisEquation_Te,
-#                             'O3_4363A'  : self.emisEquation_Te,
-#                             'O3_4959A'  : self.emisEquation_Te,
-#                             'O3_5007A'  : self.emisEquation_Te,
-#                             'O2_7319A'  : self.emisEquation_TeDe,
-#                             'O2_7330A'  : self.emisEquation_TeDe,
-#                             'N2_6548A'  : self.emisEquation_Te,
-#                             'N2_6584A'  : self.emisEquation_Te,
-#                             'H1_4102A'  : self.emisEquation_HI,
-#                             'H1_4340A'  : self.emisEquation_HI,
-#                             'H1_6563A'  : self.emisEquation_HI,
-#                             'He1_4471A' : self.emisEquation_HeI,
-#                             'He1_5876A' : self.emisEquation_HeI,
-#                             'He1_6678A' : self.emisEquation_HeI,
-#                             'He1_7065A' : self.emisEquation_HeI,
-#                             'He2_4686A' : self.emisEquation_HeII}
-#
-#         return
-#
-#     def genEmisGrid(self, linesList, teRange, neRange):
-#
-#         # Hbeta data
-#         H1 = pn.RecAtom('H', 1)
-#         HBeta = H1.getEmissivity(teRange, neRange, wave=4861, product=False)
-#
-#         # Generate the emissivity grids for all the ions
-#         emis_dict = {'HBeta': HBeta}
-#
-#         # Loop through the lines list:
-#         for i in range(len(linesList)):
-#
-#             element, ionization, wave = linesList[i][0][:-1], linesList[i][0][-1], linesList[i][1]
-#             line_label = '{}{}_{}A'.format(element, ionization, wave)
-#
-#             if element in ['H', 'He']:
-#                 ion = pn.RecAtom(element, ionization)
-#                 emis_dict[line_label] = ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta
-#
-#             else:
-#                 ion = pn.Atom(element, ionization)
-#                 emis_dict[line_label] = np.log10(ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta)
-#
-#         return emis_dict
-#
-#     def emisEquation_Te(self, xy_space, a, b, c):
-#         temp_range, den_range = xy_space
-#         return a + b / temp_range + c * np.log10(temp_range)
-#
-#     def emisEquation_TeDe(self, xy_space, a, b, c, d, e):
-#         temp_range, den_range = xy_space
-#         return a + b / temp_range + c * np.log10(temp_range) + np.log10(1 + e * den_range)
-#
-#     def emisEquation_HI(self, xy_space, a, b, c):
-#         temp_range, den_range = xy_space
-#         return a + b * np.log(temp_range) + c * np.log10(temp_range) * np.log10(temp_range)
-#
-#     def emisEquation_HeI(self, xy_space, a, b, c):
-#         temp_range, den_range = xy_space
-#         return a * (temp_range/10000.0)**(c + b * den_range)
-#
-#     def residuals(self, d, p):
-#         temp_range, den_range, pyneb_grid = d
-#         a,b,c = p
-#         return self.emisEquation_HeI((temp_range, den_range), a,b,c) - pyneb_grid
-#
-#     def emisEquation_HeI_log(self, xy_space, a, b, c):
-#         temp_range, den_range = xy_space
-#         return np.log10(a + b * den_range) + (c + b * den_range) * np.log10(temp_range/10000.0)
-#
-#     def emisEquation_HeII(self, xy_space, a, b):
-#         temp_range, den_range = xy_space
-#         return a * np.power(temp_range, b)
-#
-#     def fitEmis(self, func_emis, xy_space, line_emis, p0 = None):
-#         p1, p1_cov = curve_fit(func_emis, xy_space, line_emis, p0)
-#         return p1, p1_cov
-#
-#     def emisTeNe_3DPlot(self, coeffs, func_emis, te_ne_grid, emis_grid, line_label):
-#
-#         # Plot the grid points
-#         fig = plt.figure()
-#         ax = fig.add_subplot(111, projection='3d')
-#
-#         # Plot the grid points
-#         ax.scatter(te_ne_grid[0], te_ne_grid[1], emis_grid, color='r', alpha=0.5)
-#
-#         # Generate fitted surface points
-#         matrix_edge = int(np.sqrt(te_ne_grid[0].shape[0]))
-#         surface_points = func_emis(te_ne_grid, *coeffs).reshape((matrix_edge, matrix_edge))
-#
-#         surface_epm = (0.745-5.1e-5*te_ne_grid[1]) * np.power(te_ne_grid[0]/10000.0, 0.226-0.0011*te_ne_grid[1])
-#         surface_aver = (0.754) * np.power(te_ne_grid[0]/10000.0, 0.212-0.00051*te_ne_grid[1])
-#         ax.scatter(te_ne_grid[0], te_ne_grid[1], surface_epm, color='blue', alpha=0.5)
-#         ax.scatter(te_ne_grid[0], te_ne_grid[1], surface_aver, color='green', alpha=0.5)
-#
-#         #Plot surface
-#         ax.plot_surface(te_ne_grid[0].reshape((matrix_edge, matrix_edge)), te_ne_grid[1].reshape((matrix_edge, matrix_edge)), surface_points, rstride=1, cstride=1, color='g', alpha=0.5)
-#
-#         # Add labels
-#         ax.set_xlabel('Temperature $(K)$', fontsize=15)
-#         ax.set_ylabel('Density ($cm^{-3}$)', fontsize=15)
-#         title_label = line_label
-#         ax.set_title(title_label, fontsize=15)
-#
-#         # Display graph
-#         plt.show()
-#
-#         return
-#
-#     def emisTeNe_2DPlot(self, coeffs, func_emis, te_ne_grid, emis_grid, line_label):
-#
-#         print 'estos son', coeffs
-#
-#         # Generate figure
-#         fig = plt.figure()
-#         ax = fig.add_subplot(111)
-#
-#         # Generate fitted surface points
-#         matrix_edge = int(np.sqrt(te_ne_grid[0].shape[0]))
-#         surface_points = func_emis(te_ne_grid, *coeffs)
-#
-#         # Plot plane
-#         plt.imshow(surface_points.reshape((matrix_edge, matrix_edge)), aspect=0.03,
-#                    extent=(te_ne_grid[1].min(), te_ne_grid[1].max(), te_ne_grid[0].min(), te_ne_grid[0].max()))
-#
-#         # Compare pyneb values with values from fitting
-#         percentage_difference = (1 - surface_points/emis_grid) * 100
-#
-#         # Points with error below 1.0 are transparent:
-#         idx_interest = percentage_difference < 1.0
-#         plt.scatter(te_ne_grid[1][idx_interest], te_ne_grid[0][idx_interest], c="None", edgecolors='black', linewidths=0.35, label='Error below 1%')
-#
-#         if idx_interest.sum() < emis_grid.size:
-#
-#             # Plot grid points
-#             plt.scatter(te_ne_grid[1][~idx_interest], te_ne_grid[0][~idx_interest], c=percentage_difference[~idx_interest],
-#                         edgecolors='black', linewidths=0.1, cmap=cm.OrRd , label='Error above 1%')
-#
-#             # Color bar
-#             cbar = plt.colorbar()
-#             cbar.ax.set_ylabel('% difference', rotation=270, fontsize=15)
-#
-#         # Add labels
-#         ax.set_ylabel('Temperature $(K)$', fontsize=15)
-#         ax.set_xlabel('Density ($cm^{-3}$)', fontsize=15)
-#         title_label = line_label
-#         ax.set_title(title_label, fontsize=15)
-#
-#         plt.ylim(te_ne_grid[0].min(), te_ne_grid[0].max())
-#         plt.xlim(te_ne_grid[1].min(), te_ne_grid[1].max())
-#
-#         # Display the plot
-#         plt.legend()
-#         plt.show()
-#         plt.cla()
-#
-#         # Save the plot
-#         # output_address = '{}{}'.format('/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/input_data/2Demis_',line_label)
-#         # fig.savefig(output_address, bbox_inches='tight', pad_inches=0.2)
-#         # plt.cla()
-#
-#         return
-#
-# if __name__ == "__main__":
-#
-#
-#
-#     H1 = pn.RecAtom('H', 1)
-#     He1 = pn.RecAtom('He', 1)
-#     T_true, ne_true = 12000.0, 100.0
-#
-#     He1.printSources()
-#
-#     Hbeta = H1.getEmissivity(tem=T_true, den=ne_true, wave=4861)
-#     He1_5876A = He1.getEmissivity(tem=T_true, den=ne_true, wave=5876)
-#     He1_5876A_epm = (0.745-5.1e-5*ne_true) * (T_true/10000.0)**(0.226-0.0011*ne_true)
-#
-#     print 'Relative line emissivity comparison:'
-#     print He1_5876A/Hbeta
-#     print He1_5876A_epm
-#
-#     exit()
+
+        self.load_ftau_coeffs()
+
+        return
+
+    def load_ftau_coeffs(self):
+
+        paths_dict = {'Helium_OpticalDepth':'/home/vital/PycharmProjects/dazer/bin/lib/Astro_Libraries/Benjamin1999_OpticalDepthFunctionCoefficients.txt'}
+
+        opticalDepthCoeffs_df = pd.read_csv(paths_dict['Helium_OpticalDepth'], delim_whitespace=True, header=0)
+
+        self.opticalDepthCoeffs = {}
+        for column in opticalDepthCoeffs_df.columns:
+            self.opticalDepthCoeffs[column] = opticalDepthCoeffs_df[column].values
+
+        return
+
+    def optical_depth_function(self, tau, temp, den, a, b, c, d):
+        return 1 + tau/2.0 * (a + (b + c * den + d * den * den)*temp/10000.0)
+
+    def genEmisGrid(self, linesList, teRange, neRange):
+
+        # Hbeta data
+        H1 = pn.RecAtom('H', 1)
+        HBeta = H1.getEmissivity(teRange, neRange, wave=4861, product=False)
+
+        # Generate the emissivity grids for all the ions
+        emis_dict = {'HBeta': HBeta}
+
+        # Loop through the lines list:
+        for i in range(len(linesList)):
+
+            element, ionization, wave = linesList[i][0][:-1], linesList[i][0][-1], linesList[i][1]
+            line_label = '{}{}_{}A'.format(element, ionization, wave)
+
+            if element in ['H', 'He']:
+                ion = pn.RecAtom(element, ionization)
+                emis_dict[line_label] = ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta
+
+            else:
+                ion = pn.Atom(element, ionization)
+                emis_dict[line_label] = np.log10(ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta)
+
+        return emis_dict
+
+    def emisEquation_Te(self, xy_space, a, b, c):
+        temp_range, den_range = xy_space
+        return a + b / temp_range + c * np.log10(temp_range)
+
+    def emisEquation_TeDe(self, xy_space, a, b, c, d, e):
+        temp_range, den_range = xy_space
+        return a + b / temp_range + c * np.log10(temp_range) + np.log10(1 + e * den_range)
+
+    def emisEquation_HI(self, xy_space, a, b, c):
+        temp_range, den_range = xy_space
+        return a + b * np.log(temp_range) + c * np.log10(temp_range) * np.log10(temp_range)
+
+    def emisEquation_HeI(self, xy_space, a, b, c, d):
+        temp_range, den_range = xy_space
+        return (a + b*den_range) * (temp_range/10000.0)**(c + d * den_range)
+
+    def residuals(self, d, p):
+        temp_range, den_range, pyneb_grid = d
+        a,b,c = p
+        return self.emisEquation_HeI((temp_range, den_range), a,b,c) - pyneb_grid
+
+    def emisEquation_HeI_log(self, xy_space, a, b, c):
+        temp_range, den_range = xy_space
+        return np.log10(a + b * den_range) + (c + b * den_range) * np.log10(temp_range/10000.0)
+
+    def emisEquation_HeII(self, xy_space, a, b):
+        temp_range, den_range = xy_space
+        return a * np.power(temp_range, b)
+
+    def fitEmis(self, func_emis, xy_space, line_emis, p0 = None):
+        p1, p1_cov = curve_fit(func_emis, xy_space, line_emis, p0)
+        return p1, p1_cov
+
+    def emisTeNe_3DPlot(self, coeffs, func_emis, te_ne_grid, emis_grid, line_label):
+
+        # Plot the grid points
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        # Plot the grid points
+        ax.scatter(te_ne_grid[0], te_ne_grid[1], emis_grid, color='r', alpha=0.5)
+
+        # Generate fitted surface points
+        matrix_edge = int(np.sqrt(te_ne_grid[0].shape[0]))
+        surface_points = func_emis(te_ne_grid, *coeffs).reshape((matrix_edge, matrix_edge))
+
+        surface_epm = (0.745-5.1e-5*te_ne_grid[1]) * np.power(te_ne_grid[0]/10000.0, 0.226-0.0011*te_ne_grid[1])
+        surface_aver = (0.754) * np.power(te_ne_grid[0]/10000.0, 0.212-0.00051*te_ne_grid[1])
+        ax.scatter(te_ne_grid[0], te_ne_grid[1], surface_epm, color='blue', alpha=0.5)
+        ax.scatter(te_ne_grid[0], te_ne_grid[1], surface_aver, color='green', alpha=0.5)
+
+        #Plot surface
+        ax.plot_surface(te_ne_grid[0].reshape((matrix_edge, matrix_edge)), te_ne_grid[1].reshape((matrix_edge, matrix_edge)), surface_points, rstride=1, cstride=1, color='g', alpha=0.5)
+
+        # Add labels
+        ax.set_xlabel('Temperature $(K)$', fontsize=15)
+        ax.set_ylabel('Density ($cm^{-3}$)', fontsize=15)
+        title_label = line_label
+        ax.set_title(title_label, fontsize=15)
+
+        # Display graph
+        plt.show()
+
+        return
+
+    def emisTeNe_2DPlot(self, coeffs, func_emis, te_ne_grid, emis_grid, line_label):
+
+        print 'estos son', coeffs
+
+        # Generate figure
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        # Generate fitted surface points
+        matrix_edge = int(np.sqrt(te_ne_grid[0].shape[0]))
+        surface_points = func_emis(te_ne_grid, *coeffs)
+
+        # Plot plane
+        plt.imshow(surface_points.reshape((matrix_edge, matrix_edge)), aspect=0.03,
+                   extent=(te_ne_grid[1].min(), te_ne_grid[1].max(), te_ne_grid[0].min(), te_ne_grid[0].max()))
+
+        # Compare pyneb values with values from fitting
+        percentage_difference = (1 - surface_points/emis_grid) * 100
+
+        # Points with error below 1.0 are transparent:
+        idx_interest = percentage_difference < 1.0
+        plt.scatter(te_ne_grid[1][idx_interest], te_ne_grid[0][idx_interest], c="None", edgecolors='black', linewidths=0.35, label='Error below 1%')
+
+        if idx_interest.sum() < emis_grid.size:
+
+            # Plot grid points
+            plt.scatter(te_ne_grid[1][~idx_interest], te_ne_grid[0][~idx_interest], c=percentage_difference[~idx_interest],
+                        edgecolors='black', linewidths=0.1, cmap=cm.OrRd , label='Error above 1%')
+
+            # Color bar
+            cbar = plt.colorbar()
+            cbar.ax.set_ylabel('% difference', rotation=270, fontsize=15)
+
+        # Add labels
+        ax.set_ylabel('Temperature $(K)$', fontsize=15)
+        ax.set_xlabel('Density ($cm^{-3}$)', fontsize=15)
+        title_label = line_label
+        ax.set_title(title_label, fontsize=15)
+
+        plt.ylim(te_ne_grid[0].min(), te_ne_grid[0].max())
+        plt.xlim(te_ne_grid[1].min(), te_ne_grid[1].max())
+
+        # Display the plot
+        plt.legend()
+        plt.show()
+        plt.cla()
+
+        # Save the plot
+        # output_address = '{}{}'.format('/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/input_data/2Demis_',line_label)
+        # fig.savefig(output_address, bbox_inches='tight', pad_inches=0.2)
+        # plt.cla()
+
+        return
+
+if __name__ == "__main__":
+
+    print 2**(3.2 - 1.5)
+
+    print (2**3.2 / 2**1.5)
+
+    # efitter = EmissivitySurfaceFitter()
+    #
+    # efitter.load_ftau_coeffs()
+    #
+    # tau_true = 0.234
+    # Te_true = 12550.0
+    # ne_true = 125.0
+    #
+    # for line_label in efitter.opticalDepthCoeffs:
+    #     ftau_coefs = efitter.opticalDepthCoeffs[line_label]
+    #
+    #     print line_label, efitter.optical_depth_function(tau_true, Te_true, ne_true, *ftau_coefs), ftau_coefs
+
 
     #
     # Hbeta = H1.getEmissivity(tem=T_true, den=ne_true, wave=4861)
