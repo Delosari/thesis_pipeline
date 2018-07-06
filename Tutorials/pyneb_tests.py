@@ -46,7 +46,7 @@ class EmissivitySurfaceFitter():
 
     def load_ftau_coeffs(self):
 
-        paths_dict = {'Helium_OpticalDepth':'/home/vital/PycharmProjects/dazer/bin/lib/Astro_Libraries/Benjamin1999_OpticalDepthFunctionCoefficients.txt'}
+        paths_dict = {'Helium_OpticalDepth':'/home/vital/PycharmProjects/dazer/bin/lib/Astro_Libraries/literature_data/Benjamin1999_OpticalDepthFunctionCoefficients.txt'}
 
         opticalDepthCoeffs_df = pd.read_csv(paths_dict['Helium_OpticalDepth'], delim_whitespace=True, header=0)
 
@@ -73,10 +73,12 @@ class EmissivitySurfaceFitter():
 
             element, ionization, wave = linesList[i][0][:-1], linesList[i][0][-1], linesList[i][1]
             line_label = '{}{}_{}A'.format(element, ionization, wave)
-
             if element in ['H', 'He']:
                 ion = pn.RecAtom(element, ionization)
-                emis_dict[line_label] = ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta
+                if element == 'H':
+                    emis_dict[line_label] = ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta
+                if element == 'He':
+                    emis_dict[line_label] = ion.getEmissivity(teRange, neRange, wave=wave, product=False) / HBeta
 
             else:
                 ion = pn.Atom(element, ionization)
@@ -96,9 +98,17 @@ class EmissivitySurfaceFitter():
         temp_range, den_range = xy_space
         return a + b * np.log(temp_range) + c * np.log10(temp_range) * np.log10(temp_range)
 
+    # def emisEquation_HeI(self, xy_space, a, b, c, d):
+    #     temp_range, den_range = xy_space
+    #     return (a + b * den_range) * np.power(temp_range/10000.0, c + d*den_range)
+
     def emisEquation_HeI(self, xy_space, a, b, c, d):
         temp_range, den_range = xy_space
-        return (a + b*den_range) * (temp_range/10000.0)**(c + d * den_range)
+        return (a + b * den_range) * np.log10(temp_range/10000.0) -  np.log10(c + d*den_range)
+
+    def emisEquation_HeI_backUp(self, xy_space, a, b, c, d):
+        temp_range, den_range = xy_space
+        return (1/(a + b*den_range)) * (temp_range/10000.0)**(c + d * den_range)
 
     def residuals(self, d, p):
         temp_range, den_range, pyneb_grid = d
