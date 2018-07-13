@@ -1,3 +1,25 @@
+import os
+import numpy as np
+os.environ["MKL_THREADING_LAYER"] = "GNU"
+import theano
+
+
+
+def myOperation(a, b):
+    return a**2 + 2 * a * b
+
+a = theano.tensor.vector()
+b = theano.tensor.dscalar()
+myOperation_tt = theano.function([a, b], myOperation)
+print myOperation_tt(a=np.array([1,2,3]), b=2)
+
+
+# a = theano.tensor.vector() # declare variable
+# b = theano.tensor.dscalar()
+# out = a ** 2 + 2 * a * b              # build symbolic expression
+# f = theano.function([a, b], out)   # compile function
+# print(f([0, 1, 2],3))
+
 # import os
 # import numpy as np
 # os.environ["MKL_THREADING_LAYER"] = "GNU"
@@ -154,85 +176,85 @@
 # T_sigma     = 1 # K
 #
 # print P_obs
-
-
-
-
-
-
-import os
-import numpy as np
-os.environ["MKL_THREADING_LAYER"] = "GNU"
-import theano
-import theano.tensor as tt
-import pymc3 as pm
-import matplotlib.pyplot as plt
-
-# Constants
-R_air_true  = 286.986 # J / (kg * K)
-
-#Street measurements
-P_true = 101325  # kg * m * s**-2
-n_obs = 10
-T_obs = np.random.uniform(low=10, high=12, size=n_obs) + 273
-T_sigma = 1 # K
-
-# Model ingredients data:
-axis_length = 10
-X_coords = np.linspace(5, 40, axis_length)
-Y_coords = np.linspace(10, 20, axis_length)
-density_grid = np.linspace(0.5, 2, 100).reshape((axis_length, axis_length))
-
-# Converting to theano variables
-X_coords_t = theano.shared(X_coords)
-Y_coords_t = theano.shared(Y_coords)
-density_grid_t = theano.shared(density_grid)
-
-# Model using street measurements
-with pm.Model() as outside_temperature:
-
-    # Priors for the air gas constant
-    R_air = pm.Normal('R_air', mu=300, sd=100)
-
-    # Priors for the grid indeces
-    x_idx = pm.Uniform('x_idx0', lower=0, upper=axis_length)
-    y_idx = pm.Uniform('y_idx0', lower=0, upper=axis_length)
-
-    # Use floor operaton to get the closest points in the grid
-    x_idx1, y_idx1 = tt.cast(pm.math.floor(x_idx), 'int64'), tt.cast(pm.math.floor(y_idx), 'int64')
-    x_idx2, y_idx2 = x_idx1 + 1, y_idx1 + 1
-
-    # Interpolate the values for X and Y coordinates
-    x_in = X_coords_t[x_idx1] + (x_idx - x_idx1) * (X_coords_t[x_idx2] - X_coords_t[x_idx1])/(x_idx2 - x_idx1)
-    y_in = Y_coords_t[y_idx1] + (y_idx - y_idx1) * (Y_coords_t[y_idx2] - Y_coords_t[y_idx1])/(y_idx2 - y_idx1)
-
-    # Neighbouring points for the grid for X and Y coordinates:
-    x1, x2 = X_coords_t[x_idx1], X_coords_t[x_idx2]
-    y1, y2 = Y_coords_t[y_idx1], Y_coords_t[y_idx2]
-    z11, z12 = density_grid_t[x_idx1, y_idx1], density_grid_t[x_idx1, y_idx2]
-    z21, z22 = density_grid_t[x_idx2, y_idx1], density_grid_t[x_idx2, y_idx2]
-
-    #Bilinear interpolation of the grid
-    rho_air = (z11 * (x2 - x_in) * (y2 - y_in) +
-            z21 * (x_in - x1) * (y2 - y_in) +
-            z12 * (x2 - x_in) * (y_in - y1) +
-            z22 * (x_in - x1) * (y_in - y1)) / ((x2 - x1) * (y2 - y1))
-
-    # Simulated expectation value
-    T_synth = P_true / (R_air * rho_air)
-
-    # Declare the model likelihood:
-    Y_obs = pm.Normal('Y_obs', mu=T_synth, sd=T_sigma, observed=T_obs)
-
-    # Run NUTS sampler
-    trace = pm.sample(4000, tune=2000)
-
-# Display summary
-print pm.summary(trace)
-
-# Display trace
-pm.traceplot(trace)
-plt.show()
+#
+#
+#
+#
+#
+#
+# import os
+# import numpy as np
+# os.environ["MKL_THREADING_LAYER"] = "GNU"
+# import theano
+# import theano.tensor as tt
+# import pymc3 as pm
+# import matplotlib.pyplot as plt
+#
+# # Constants
+# R_air_true  = 286.986 # J / (kg * K)
+#
+# #Street measurements
+# P_true = 101325  # kg * m * s**-2
+# n_obs = 10
+# T_obs = np.random.uniform(low=10, high=12, size=n_obs) + 273
+# T_sigma = 1 # K
+#
+# # Model ingredients data:
+# axis_length = 10
+# X_coords = np.linspace(5, 40, axis_length)
+# Y_coords = np.linspace(10, 20, axis_length)
+# density_grid = np.linspace(0.5, 2, 100).reshape((axis_length, axis_length))
+#
+# # Converting to theano variables
+# X_coords_t = theano.shared(X_coords)
+# Y_coords_t = theano.shared(Y_coords)
+# density_grid_t = theano.shared(density_grid)
+#
+# # Model using street measurements
+# with pm.Model() as outside_temperature:
+#
+#     # Priors for the air gas constant
+#     R_air = pm.Normal('R_air', mu=300, sd=100)
+#
+#     # Priors for the grid indeces
+#     x_idx = pm.Uniform('x_idx0', lower=0, upper=axis_length)
+#     y_idx = pm.Uniform('y_idx0', lower=0, upper=axis_length)
+#
+#     # Use floor operaton to get the closest points in the grid
+#     x_idx1, y_idx1 = tt.cast(pm.math.floor(x_idx), 'int64'), tt.cast(pm.math.floor(y_idx), 'int64')
+#     x_idx2, y_idx2 = x_idx1 + 1, y_idx1 + 1
+#
+#     # Interpolate the values for X and Y coordinates
+#     x_in = X_coords_t[x_idx1] + (x_idx - x_idx1) * (X_coords_t[x_idx2] - X_coords_t[x_idx1])/(x_idx2 - x_idx1)
+#     y_in = Y_coords_t[y_idx1] + (y_idx - y_idx1) * (Y_coords_t[y_idx2] - Y_coords_t[y_idx1])/(y_idx2 - y_idx1)
+#
+#     # Neighbouring points for the grid for X and Y coordinates:
+#     x1, x2 = X_coords_t[x_idx1], X_coords_t[x_idx2]
+#     y1, y2 = Y_coords_t[y_idx1], Y_coords_t[y_idx2]
+#     z11, z12 = density_grid_t[x_idx1, y_idx1], density_grid_t[x_idx1, y_idx2]
+#     z21, z22 = density_grid_t[x_idx2, y_idx1], density_grid_t[x_idx2, y_idx2]
+#
+#     #Bilinear interpolation of the grid
+#     rho_air = (z11 * (x2 - x_in) * (y2 - y_in) +
+#             z21 * (x_in - x1) * (y2 - y_in) +
+#             z12 * (x2 - x_in) * (y_in - y1) +
+#             z22 * (x_in - x1) * (y_in - y1)) / ((x2 - x1) * (y2 - y1))
+#
+#     # Simulated expectation value
+#     T_synth = P_true / (R_air * rho_air)
+#
+#     # Declare the model likelihood:
+#     Y_obs = pm.Normal('Y_obs', mu=T_synth, sd=T_sigma, observed=T_obs)
+#
+#     # Run NUTS sampler
+#     trace = pm.sample(4000, tune=2000)
+#
+# # Display summary
+# print pm.summary(trace)
+#
+# # Display trace
+# pm.traceplot(trace)
+# plt.show()
 
 
 

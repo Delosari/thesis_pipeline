@@ -23,6 +23,8 @@ class EmissivitySurfaceFitter():
                             'O3_4363A'  : self.emisEquation_Te,
                             'O3_4959A'  : self.emisEquation_Te,
                             'O3_5007A'  : self.emisEquation_Te,
+                            'O2_3726A'  : self.emisEquation_TeDe,
+                            'O2_3729A'  : self.emisEquation_TeDe,
                             'O2_7319A'  : self.emisEquation_TeDe,
                             'O2_7330A'  : self.emisEquation_TeDe,
                             'N2_6548A'  : self.emisEquation_Te,
@@ -36,9 +38,7 @@ class EmissivitySurfaceFitter():
                             'He1_7065A' : self.emisEquation_HeI,
                             'He2_4686A' : self.emisEquation_HeII}
 
-        self.high_temp_ions = ['He1', 'He2', 'O3', 'Ar4']
-
-
+        self.high_temp_ions = ['He1', 'He2', 'O3', 'Ar4'] # TODO this should be read from a file
 
         self.load_ftau_coeffs()
 
@@ -98,17 +98,9 @@ class EmissivitySurfaceFitter():
         temp_range, den_range = xy_space
         return a + b * np.log(temp_range) + c * np.log10(temp_range) * np.log10(temp_range)
 
-    # def emisEquation_HeI(self, xy_space, a, b, c, d):
-    #     temp_range, den_range = xy_space
-    #     return (a + b * den_range) * np.power(temp_range/10000.0, c + d*den_range)
-
     def emisEquation_HeI(self, xy_space, a, b, c, d):
         temp_range, den_range = xy_space
-        return (a + b * den_range) * np.log10(temp_range/10000.0) -  np.log10(c + d*den_range)
-
-    def emisEquation_HeI_backUp(self, xy_space, a, b, c, d):
-        temp_range, den_range = xy_space
-        return (1/(a + b*den_range)) * (temp_range/10000.0)**(c + d * den_range)
+        return (a + b * den_range) * np.log10(temp_range/10000.0) - np.log10(c + d*den_range)
 
     def residuals(self, d, p):
         temp_range, den_range, pyneb_grid = d

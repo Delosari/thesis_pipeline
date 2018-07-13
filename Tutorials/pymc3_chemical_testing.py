@@ -108,8 +108,9 @@ f_lambda_dict = dict(S2_6717A=-0.318, S2_6731A=-0.320, S3_6312A=-0.264, S3_9069A
 
 # Define lines to treat
 #idx = lines_df.ion.isin(['H1', 'He1'])
-idx = lines_df.ion.isin(['H1', 'O3', 'O2', 'S2', 'S3', 'He1'])
+#idx = lines_df.ion.isin(['H1', 'O3', 'O2', 'S2', 'S3', 'He1'])
 #idx = lines_df.ion.isin(lines_df.ion.values)
+idx = lines_df.ion.isin(['O3', 'O2', 'S2', 'S3'])
 obs_lines = lines_df.loc[idx].index.values
 
 coeffs_dict, emis_pmEq = {}, {}
@@ -133,153 +134,158 @@ line_func = efitter.emis_eq_dict[line_label]
 p1, cov1 = efitter.fitEmis(line_func, (XX, YY), emis_dict[line_label])
 coeffs_dict[line_label] = p1
 
-# efitter.emisTeNe_2DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
-efitter.emisTeNe_3DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
+#efitter.emisTeNe_2DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
+#efitter.emisTeNe_3DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
+
+# Generate synthetic data
+for i in range(len(obs_lines)):
+
+    #Get line label
+    line_label = obs_lines[i]
+
+    # Lines data
+    line_func       = efitter.emis_eq_dict[line_label]
+    f_lambda        = f_lambda_dict[line_label]
+
+    # Compute emissivity functions coefficients
+    p1, cov1 = efitter.fitEmis(line_func, (XX, YY), emis_dict[line_label])
+    coeffs_dict[line_label] = p1
+
+    if line_label in ['He1_4471A', 'He1_5876A', 'He1_6678A', 'He1_7065A']:
+        coeffs_dict[line_label] = synth_coefs[line_label]
+
+    # Operation data
+    emisfunc = efitter.emis_eq_dict[line_label]
+
+    # Assign equation to model
+    if emisfunc.__name__ == 'emisEquation_Te':
+        emis_pmEq[line_label] = emisEquation_Te_pm
+
+    elif emisfunc.__name__ == 'emisEquation_TeDe':
+        emis_pmEq[line_label] = emisEquation_TeDe_pm
+
+    elif emisfunc.__name__ == 'emisEquation_HI':
+        emis_pmEq[line_label] = emisEquation_HI_pm
+
+    elif emisfunc.__name__ == 'emisEquation_HeI':
+        emis_pmEq[line_label] = emisEquation_HeI_pm
+
+    elif emisfunc.__name__ == 'emisEquation_HeII':
+        emis_pmEq[line_label] = emisEquation_HeII_pm
+
+    #Temperature for the ion
+    T_high = TOIII_TSIII_relation(Te_true)
+    T_calc = Te_true if temp_low_array[i] else T_high
+
+    # Emissivity calculation data
+    line_emis = emisfunc((T_calc, ne_true), *coeffs_dict[line_label])
+
+    # Flux calculation
+    if HI_lines[i]:
+        flux_array[i] = line_emis * np.power(10, f_lambda * cHbeta_true)
+    elif HeI_lines[i]:
+        f_tau_coeffs = efitter.opticalDepthCoeffs[line_label]
+        f_tau = efitter.optical_depth_function(tau_true, T_calc, ne_true, *f_tau_coeffs)
+        flux_array[i] = abund_dict[ions_array[i]] * line_emis * f_tau * np.power(10, f_lambda * cHbeta_true)
+    elif HeII_lines[i]:
+        flux_array[i] = abund_dict[ions_array[i]] * line_emis * np.power(10, f_lambda * cHbeta_true)
+    else:
+        flux_array[i] = abund_dict[ions_array[i]] + line_emis - f_lambda * cHbeta_true - 12
+
+    print '{}_{}_{}'.format(obs_lines[i], ions_array[i], wave_array[i]), line_emis, flux_array[i]
 
 
+# Synthetic error for the data
+err_array = np.abs(flux_array * 0.05)
 
-# # Generate synthetic data
-# for i in range(len(obs_lines)):
-#
-#     #Get line label
-#     line_label = obs_lines[i]
-#
-#     # Lines data
-#     line_func       = efitter.emis_eq_dict[line_label]
-#     f_lambda        = f_lambda_dict[line_label]
-#
-#     # Compute emissivity functions coefficients
-#     p1, cov1 = efitter.fitEmis(line_func, (XX, YY), emis_dict[line_label])
-#     coeffs_dict[line_label] = p1
-#
-#     if line_label in ['He1_4471A', 'He1_5876A', 'He1_6678A', 'He1_7065A']:
-#         coeffs_dict[line_label] = synth_coefs[line_label]
-# 
-#     # Operation data
-#     emisfunc = efitter.emis_eq_dict[line_label]
-# 
-#     # Assign equation to model
-#     if emisfunc.__name__ == 'emisEquation_Te':
-#         emis_pmEq[line_label] = emisEquation_Te_pm
-# 
-#     elif emisfunc.__name__ == 'emisEquation_TeDe':
-#         emis_pmEq[line_label] = emisEquation_TeDe_pm
-# 
-#     elif emisfunc.__name__ == 'emisEquation_HI':
-#         emis_pmEq[line_label] = emisEquation_HI_pm
-# 
-#     elif emisfunc.__name__ == 'emisEquation_HeI':
-#         emis_pmEq[line_label] = emisEquation_HeI_pm
-# 
-#     elif emisfunc.__name__ == 'emisEquation_HeII':
-#         emis_pmEq[line_label] = emisEquation_HeII_pm
-# 
-#     #Temperature for the ion
-#     T_high = TOIII_TSIII_relation(Te_true)
-#     T_calc = Te_true if temp_low_array[i] else T_high
-# 
-#     # Emissivity calculation data
-#     line_emis = emisfunc((T_calc, ne_true), *coeffs_dict[line_label])
-# 
-#     # Flux calculation
-#     if HI_lines[i]:
-#         flux_array[i] = line_emis * np.power(10, f_lambda * cHbeta_true)
-#     elif HeI_lines[i]:
-#         f_tau_coeffs = efitter.opticalDepthCoeffs[line_label]
-#         f_tau = efitter.optical_depth_function(tau_true, T_calc, ne_true, *f_tau_coeffs)
-#         flux_array[i] = abund_dict[ions_array[i]] * line_emis * f_tau * np.power(10, f_lambda * cHbeta_true)
-#     elif HeII_lines[i]:
-#         flux_array[i] = abund_dict[ions_array[i]] * line_emis * np.power(10, f_lambda * cHbeta_true)
-#     else:
-#         flux_array[i] = abund_dict[ions_array[i]] + line_emis - f_lambda * cHbeta_true - 12
-#     print '{}_{}_{}'.format(obs_lines[i], ions_array[i], wave_array[i]), line_emis, flux_array[i]
-# 
-# 
-# # Synthetic error for the data
-# err_array = np.abs(flux_array * 0.05)
-# 
-# # Run pymc3 model
-# line_flux_tt = tt.zeros(flux_array.size)
-# print '-Starting the model'
-# with pm.Model() as model:
-# 
-#     # Physical conditions priors
-#     T_low = pm.Normal('T_low', mu=10000.0, sd=1000.0)
-#     n_e = pm.Normal('n_e', mu=80, sd=50)
-#     cHbeta = pm.Uniform('cHbeta', lower=0.0, upper=1.0)
-# 
-#     if He1_check:
-#         tau = pm.Uniform('tau', lower=0, upper=5)
-# 
-#     T_high = TOIII_TSIII_relation(T_low)
-# 
-#     # Composition priors
-#     abund_dict = {'H1':1.0}
-#     for j in range_abund:
-#         abund_dict[obs_abund[j]] = pm.Uniform(obs_abund[j], lower=0, upper=10)
-# 
-#     # abund_dict = {'S2': pm.Uniform('S2_abund', lower=0, upper=10),
-#     #               'S3': pm.Uniform('S3_abund', lower=0, upper=10),
-#     #               'O2': pm.Uniform('O2_abund', lower=0, upper=10),
-#     #               'O3': pm.Uniform('O3_abund', lower=0, upper=10),
-#     #               'N2': pm.Uniform('N2_abund', lower=0, upper=10),
-#     #               'Ar3': pm.Uniform('Ar3_abund', lower=0, upper=10),
-#     #               'Ar4': pm.Uniform('Ar4_abund', lower=0, upper=10)}
-# 
-#     for i in range_lines:
-# 
-#         # Line data
-#         line_label = obs_lines[i]
-#         line_ion = ions_array[i]
-#         line_coeffs = coeffs_dict[line_label]
-#         line_func = emis_pmEq[line_label]
-#         line_flambda = f_lambda_dict[line_label]
-# 
-#         Te_calc = T_low if temp_low_array[i] else T_high
-# 
-#         line_emis = line_func(Te_calc, n_e, *line_coeffs)
-# 
-#         # H1 flux
-#         if HI_lines[i]:
-#             line_flux_i = line_emis * tt.power(10, line_flambda * cHbeta)
-# 
-#         # He1 flux
-#         elif HeI_lines[i]:
-#             line_abund = abund_dict[line_ion]
-#             f_tau_coeffs = efitter.opticalDepthCoeffs[line_label]
-#             f_tau = efitter.optical_depth_function(tau, T_calc, n_e, *f_tau_coeffs)
-#             line_flux_i = line_abund * line_emis * f_tau * tt.power(10, line_flambda * cHbeta)
-# 
-#         # He2 flux
-#         elif HeII_lines[i]:
-#             line_abund = abund_dict[line_ion]
-#             line_flux_i = line_abund * line_emis * tt.power(10, line_flambda * cHbeta)
-# 
-#         # Metals flux
-#         else:
-#             line_abund = abund_dict[line_ion]
-#             line_flux_i = line_abund + line_emis - line_flambda * cHbeta - 12.0
-# 
-#         line_flux_tt = tt.inc_subtensor(line_flux_tt[i], line_flux_i)
-# 
-#         #Likelihood individual line
-#         #chiSq = pm.Normal(line_label + '_Y', mu=line_flux, sd=err_list[i], observed=fluxes_list[i])
-# 
-#     # Global normal Likelihood for all lines
-#     Y = pm.Normal('Y', mu=line_flux_tt, sd=err_array, observed=flux_array)
-# 
-#     # Global multivariable likelihood for all lines
-#     #Y = pm.MvNormal('Y', mu=line_flux_tt, cov=cov_array, observed=flux_array)
-# 
-#     for RV in model.basic_RVs:
-#         print(RV.name, RV.logp(model.test_point))#
-# 
-#     # Launch model
-#     trace = pm.sample(8000, tune=2000)
-# 
-# print pm.summary(trace)
-# pm.traceplot(trace)
-# plt.show()
+print 'Dame estos'
+print flux_array
+print err_array
+
+exit()
+
+# Run pymc3 model
+line_flux_tt = tt.zeros(flux_array.size)
+print '-Starting the model'
+with pm.Model() as model:
+
+    # Physical conditions priors
+    T_low = pm.Normal('T_low', mu=10000.0, sd=1000.0)
+    n_e = pm.Normal('n_e', mu=80, sd=50)
+    cHbeta = cHbeta_true#pm.Uniform('cHbeta', lower=0.0, upper=1.0)
+
+    if He1_check:
+        tau = pm.Uniform('tau', lower=0, upper=5)
+
+    T_high = TOIII_TSIII_relation(T_low)
+
+    # Composition priors
+    abund_dict = {'H1':1.0}
+    for j in range_abund:
+        abund_dict[obs_abund[j]] = pm.Uniform(obs_abund[j], lower=0, upper=10)
+
+    # abund_dict = {'S2': pm.Uniform('S2_abund', lower=0, upper=10),
+    #               'S3': pm.Uniform('S3_abund', lower=0, upper=10),
+    #               'O2': pm.Uniform('O2_abund', lower=0, upper=10),
+    #               'O3': pm.Uniform('O3_abund', lower=0, upper=10),
+    #               'N2': pm.Uniform('N2_abund', lower=0, upper=10),
+    #               'Ar3': pm.Uniform('Ar3_abund', lower=0, upper=10),
+    #               'Ar4': pm.Uniform('Ar4_abund', lower=0, upper=10)}
+
+    for i in range_lines:
+
+        # Line data
+        line_label = obs_lines[i]
+        line_ion = ions_array[i]
+        line_coeffs = coeffs_dict[line_label]
+        line_func = emis_pmEq[line_label]
+        line_flambda = f_lambda_dict[line_label]
+
+        Te_calc = T_low if temp_low_array[i] else T_high
+
+        line_emis = line_func(Te_calc, n_e, *line_coeffs)
+
+        # H1 flux
+        if HI_lines[i]:
+            line_flux_i = line_emis * tt.power(10, line_flambda * cHbeta)
+
+        # He1 flux
+        elif HeI_lines[i]:
+            line_abund = abund_dict[line_ion]
+            f_tau_coeffs = efitter.opticalDepthCoeffs[line_label]
+            f_tau = efitter.optical_depth_function(tau, T_calc, n_e, *f_tau_coeffs)
+            line_flux_i = line_abund * line_emis * f_tau * tt.power(10, line_flambda * cHbeta)
+
+        # He2 flux
+        elif HeII_lines[i]:
+            line_abund = abund_dict[line_ion]
+            line_flux_i = line_abund * line_emis * tt.power(10, line_flambda * cHbeta)
+
+        # Metals flux
+        else:
+            line_abund = abund_dict[line_ion]
+            line_flux_i = line_abund + line_emis - line_flambda * cHbeta - 12.0
+
+        line_flux_tt = tt.inc_subtensor(line_flux_tt[i], line_flux_i)
+
+        #Likelihood individual line
+        #chiSq = pm.Normal(line_label + '_Y', mu=line_flux, sd=err_list[i], observed=fluxes_list[i])
+
+    # Global normal Likelihood for all lines
+    Y = pm.Normal('Y', mu=line_flux_tt, sd=err_array, observed=flux_array)
+
+    # Global multivariable likelihood for all lines
+    #Y = pm.MvNormal('Y', mu=line_flux_tt, cov=cov_array, observed=flux_array)
+
+    for RV in model.basic_RVs:
+        print(RV.name, RV.logp(model.test_point))#
+
+    # Launch model
+    trace = pm.sample(8000, tune=2000)
+
+print pm.summary(trace)
+pm.traceplot(trace)
+plt.show()
 
 
 #
