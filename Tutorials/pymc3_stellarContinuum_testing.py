@@ -1,30 +1,184 @@
+from os import environ
+environ["MKL_THREADING_LAYER"] = "GNU"
+import theano
+import theano.tensor as tt
+import pymc3 as pm
+import numpy as np
+import matplotlib.pyplot as plt
 from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
+import pymc as pm2
 
 specS = SpectraSynthesizer()
 
-synth_data = {'spectra_components'      :['emission', 'nebular', 'stellar'],
-              'wavelengh_limits'        :[4000,6900],
-              'resample_inc'            :1,
-              'norm_interval'           :[5100,5150],
-              'input_ions'              :['H1r','He1r','He2r','O2','O3','Ar3','Ar4','S2','S3','N2'],
-              'output_folder'           :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
-              'obs_name'                :'ObsHIIgalaxySynth',
-              'obj_lines_file'          :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objlines.txt',
-              'obj_properties_file'     :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objProperties.txt',
-              'ssp_lib_type'            :'starlight',  # TODO In here we will add "test" for the pip
-              'data_folder'             :'/home/vital/Starlight/Bases/',
-              'data_file'               :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
-              'obj_ssp_coeffs_file'     :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt',
-              'error_stellarContinuum'  :0.01,
-              'error_lines'             :0.02}
+# synth_data = {'spectra_components'      :['emission', 'nebular', 'stellar'],
+#               'wavelengh_limits'        :[4200,6900],
+#               'resample_inc'            :1,
+#               'norm_interval'           :[5100,5150],
+#               'input_ions'              :['H1r','He1r','He2r','O2','O3','Ar3','Ar4','S2','S3','N2'],
+#               'output_folder'           :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
+#               'obs_name'                :'ObsHIIgalaxySynth',
+#               'obj_lines_file'          :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objlines.txt',
+#               'obj_properties_file'     :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_objProperties.txt',
+#               'ssp_lib_type'            :'starlight',  # TODO In here we will add "test" for the pip
+#               'data_folder'             :'/home/vital/Starlight/Bases/',
+#               'data_file'               :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
+#               'obj_ssp_coeffs_file'     :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt',
+#               'error_stellarContinuum'  :0.01,
+#               'error_lines'             :0.02}
+#
+# specS.gen_synth_obs(**synth_data)
 
-specS.gen_synth_obs(**synth_data)
+# Import observation
+data_address = '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/' + 'ObsHIIgalaxySynth' + '_objParams.txt'
+obsData = specS.load_obsData(data_address, 'ObsHIIgalaxySynth')
 
-wave_bases = specS.obj_data['wave_resam']
-flux_bases = specS.obj_data['']
+# Import stellar library data
+starlight_ssp = {'ssp_lib_type'         :'starlight',  # TODO In here we will add "test" for the pip
+                'data_folder'           :'/home/vital/Starlight/Bases/',
+                'data_file'             :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
+                'wavelengh_limits'      :[4200,6900],
+                'resample_inc'          :1,
+                'norm_interval'         :[5100, 5150]}
+
+ssp_starlight = specS.load_ssp_library(**starlight_ssp)
+
+# Simulation Data
+fit_conf = {'obs_data'                  :obsData,
+            'ssp_data'                  :ssp_starlight,
+            'output_folder'             :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
+            'spectra_components'        :['emission', 'nebular', 'stellar'],  # ,['emission', 'nebular', 'stellar'],
+            'input_lines'               :'all',
+            'prefit_ssp'                :False,
+            'prefit_data'               :None,
+            'wavelengh_limits'          :[4200,6900],
+            'resample_inc'              :1,
+            'norm_interval'             :[5100,5150]}
+
+# Prepare fit data
+specS.prepareSimulation(**fit_conf)
+myMask = np.ones( specS.obj_data['flux_norm'].size)
+specS.prepareContinuaData(ssp_starlight['wave_resam'], ssp_starlight['flux_norm'],  ssp_starlight['normFlux_coeff'],
+                          specS.obj_data['wave_resam'], specS.obj_data['flux_norm'],
+                          obsData['continuum_sigma'], myMask,
+                          nebularFlux = None, mainPopulationsFile = '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt')
+
+specS.inputContinuumEr = 0.05
+err_synth = np.random.normal(0, specS.inputContinuumEr, size=specS.inputContinuum.size)
+inputMio = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm)
+inputMioWitherr = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm) + err_synth
+weights_list = ['w_i__0','w_i__1','w_i__2','w_i__3','w_i__4']
+
+start_values = dict(zip(weights_list, specS.sspPrefitCoeffs))
+
+
+print specS.sspPrefitCoeffs
+print specS.nBases
+
+basesFlux_tt = theano.shared(specS.onBasesFluxNorm)
+with pm.Model() as model:
+
+    w_i = pm.Uniform('w_i', lower=0, upper=5, shape=specS.nBases)
+    err = pm.Uniform('err', lower = 0.0, upper = 20.0)
+    flux_i = w_i.dot(basesFlux_tt)
+
+    Y = pm.Normal('Y', mu=flux_i, sd=err, observed=inputMio)
+
+    for RV in model.basic_RVs:
+        print(RV.name, RV.logp(model.test_point))
+
+    # Launch model
+    step = pm.NUTS()
+    trace = pm.sample(10000, tune=1000, start=start_values, step=step)
+
+# Output trace data
+print pm.summary(trace)
+pm.traceplot(trace)
+plt.show()
+
+
+# def model(a_matrix, b_vector):
+#     x_coeffs = np.array([pm.Uniform('w__i_%i' % i, 0.0, 5.00) for i in range(specS.nBases)])
+#
+#     @pm.deterministic(plot=False)
+#     def linear_sytem(x_coeffs=x_coeffs, basesSpectra=a_matrix):
+#         return x_coeffs.dot(basesSpectra)
+#
+#     @pm.stochastic(observed=True)
+#     def likelihood(value=b_vector, fit_results=linear_sytem, sigma=specS.inputContinuumEr):
+#         chiSq = np.sum(np.square(fit_results - value) / np.square(sigma))
+#         return - chiSq / 2
+#
+#     return locals()
+#
+# # Bayesian
+# MDL1 = pm.MCMC(model(specS.onBasesFluxNorm, inputMio))
+# MDL1.sample(5000, 1000, 1)
+#
+# # Compare
+# for i in range(specS.sspPrefitCoeffs.size):
+#     bayesian_fit_coeff = MDL1.stats()['w__i_' + str(i)]['mean']
+#     print specS.sspPrefitCoeffs[i], bayesian_fit_coeff
+
+
+fig, ax = plt.subplots(1, 1, figsize=(16, 10))
+# ax.plot(specS.inputWave, specS.inputContinuum, label='Input object')
+ax.plot(specS.inputWave, inputMioWitherr, label='Input object')
+ax.plot(specS.inputWave, inputMio, label='my Input object', lineStyle = '--')
+
+# plt.fill_between(specS.inputWave, specS.inputContinuum-specS.inputContinuumEr, specS.inputContinuum+specS.inputContinuumEr, alpha = 0.5)
+ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
+ax.legend()
+plt.show()
 
 
 
+# # Get populations for the stellar continua
+# bases_idx, bases_coeff, bases_coeff_err = np.loadtxt('/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt', usecols=[0, 1, 2], unpack=True)
+#
+# inputWave = ssp_starlight['wave_resam']
+# inputContinuum = bases_coeff.dot(ssp_starlight['flux_norm'])
+# sigma_cont = 0.2
+#
+# # Pymc3 model
+# basesFlux_tt = theano.shared(ssp_starlight['flux_norm'])
+# with pm.Model() as model:
+#
+#     w_i = pm.Uniform('w_i', lower=0, upper=20, shape=bases_coeff.size)
+#
+#     flux_i = w_i.dot(basesFlux_tt)
+#
+#     start= pm.find_MAP()
+#
+#     Y = pm.Normal('Y', mu=flux_i, sd=sigma_cont, observed=inputContinuum)
+#
+#     for RV in model.basic_RVs:
+#         print(RV.name, RV.logp(model.test_point))
+#
+#     # Launch model
+#     trace = pm.sample(10000, tune=5000)
+
+# Output trace data
+# print pm.summary(trace)
+# pm.traceplot(trace)
+# plt.show()
+
+# fig, ax = plt.subplots(1, 1, figsize=(16, 10))
+# # ax.plot(specS.inputWave, specS.inputContinuum, label='Input object')
+# ax.plot(inputWave, inputContinuum, label='Input object')
+# plt.fill_between(inputWave, inputContinuum-sigma_cont, inputContinuum+sigma_cont, alpha = 0.5)
+# ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
+# ax.legend()
+# plt.show()
+
+
+
+
+# wave_bases = specS.obj_data['wave_resam']
+
+# self.prepareContinuaData()
+#
+# basesWave, basesFlux, basesFluxCoeffs, obj_WaveObs, obsFlux, obsFluxEr, objMask,
+# nebularFlux = None, mainPopulationsFile = self.obj_data['obj_ssp_coeffs_file']):
 
 
 

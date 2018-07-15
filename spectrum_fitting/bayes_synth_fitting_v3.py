@@ -56,7 +56,11 @@ fit_conf = {'obs_data'                  :obsData,
 
 # Prepare fit data
 specS.prepareSimulation(**fit_conf)
-#
+
+pymc
+
+
+
 # # Run the simulation
 # specS.fitSpectra(model_name='sulphur', iterations=8000, tuning=2000, output_folder='/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/')
 #
