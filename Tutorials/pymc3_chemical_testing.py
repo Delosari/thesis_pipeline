@@ -78,7 +78,7 @@ total_labels_array = np.array(['S2_6717A', 'S2_6731A', 'S3_6312A', 'S3_9069A', '
                         'N2_6548A', 'N2_6584A',
                         'Ar4_4740A', 'Ar3_7136A', 'Ar3_7751A',
                          'H1_4102A', 'H1_4340A', 'H1_6563A',
-                         'He1_4471A', 'He1_5876A', 'He1_6678A', 'He1_7065A',
+                         'He1_4471A', 'He1_5876A', 'He1_6678A',
                         'He2_4686A'])
 
 lines_df = pd.DataFrame(index = total_labels_array, columns = ['Flux'])
@@ -110,7 +110,7 @@ f_lambda_dict = dict(S2_6717A=-0.318, S2_6731A=-0.320, S3_6312A=-0.264, S3_9069A
 #idx = lines_df.ion.isin(['H1', 'He1'])
 #idx = lines_df.ion.isin(['H1', 'O3', 'O2', 'S2', 'S3', 'He1'])
 #idx = lines_df.ion.isin(lines_df.ion.values)
-idx = lines_df.ion.isin(['O3', 'O2', 'S2', 'S3'])
+idx = lines_df.ion.isin(['H1', 'He1'])
 obs_lines = lines_df.loc[idx].index.values
 
 coeffs_dict, emis_pmEq = {}, {}
@@ -198,11 +198,6 @@ for i in range(len(obs_lines)):
 # Synthetic error for the data
 err_array = np.abs(flux_array * 0.05)
 
-print 'Dame estos'
-print flux_array
-print err_array
-
-exit()
 
 # Run pymc3 model
 line_flux_tt = tt.zeros(flux_array.size)
@@ -212,10 +207,10 @@ with pm.Model() as model:
     # Physical conditions priors
     T_low = pm.Normal('T_low', mu=10000.0, sd=1000.0)
     n_e = pm.Normal('n_e', mu=80, sd=50)
-    cHbeta = cHbeta_true#pm.Uniform('cHbeta', lower=0.0, upper=1.0)
+    cHbeta = pm.Lognormal('cHbeta', mu=0, sd=1)
 
     if He1_check:
-        tau = pm.Uniform('tau', lower=0, upper=5)
+        tau = pm.Lognormal('tau', mu=0, sd=1)
 
     T_high = TOIII_TSIII_relation(T_low)
 

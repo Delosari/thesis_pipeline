@@ -70,7 +70,6 @@ weights_list = ['w_i__0','w_i__1','w_i__2','w_i__3','w_i__4']
 
 start_values = dict(zip(weights_list, specS.sspPrefitCoeffs))
 
-
 print specS.sspPrefitCoeffs
 print specS.nBases
 
