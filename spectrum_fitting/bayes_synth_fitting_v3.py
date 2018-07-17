@@ -38,7 +38,7 @@ starlight_ssp = {'ssp_lib_type'         :'starlight',  # TODO In here we will ad
 ssp_starlight = specS.load_ssp_library(**starlight_ssp)
 
 # Declaring observed lines
-idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3', 'H1r', 'He1r', 'He2r', 'O2', 'O3', 'Ar3', 'Ar4', 'N2'])
+idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3', 'H1r', 'O2', 'O3', 'Ar3', 'Ar4', 'N2'])
 
 test_lines = specS.linesDb.loc[idcsLineTest].index.values
 
