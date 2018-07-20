@@ -43,21 +43,21 @@ idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3', 'H1r', 'O2', 'O3', 'Ar3', 'Ar
 test_lines = specS.linesDb.loc[idcsLineTest].index.values
 
 # Simulation Data
-fit_conf = {'obs_data'                  :obsData,
-            'ssp_data'                  :ssp_starlight,
-            'output_folder'             :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
-            'spectra_components'        :['emission'],  # ,['emission', 'nebular', 'stellar'],
-            'input_lines'               :test_lines,
-            'prefit_ssp'                :False,
-            'prefit_data'               :None,
-            'wavelengh_limits'          :[4200,6900],
-            'resample_inc'              :1,
-            'norm_interval'             :[5100,5150]}
+fit_conf = dict(obs_data=obsData,
+                ssp_data=ssp_starlight,
+                output_folder='/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
+                spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
+                input_lines=test_lines,
+                prefit_ssp=False,
+                prefit_data='/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/input_data/',
+                wavelengh_limits=[4200, 6900],
+                resample_inc=1,
+                norm_interval=[5100, 5150])
 
 # Prepare fit data
 specS.prepareSimulation(**fit_conf)
 
 # Run the simulation
-specS.fitSpectra(model_name='sulphur', iterations=8000, tuning=2000, output_folder='/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/')
+specS.fitSpectra(model_name='MetalsTesting', iterations=4000, tuning=2000, output_folder='/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/')
 
 

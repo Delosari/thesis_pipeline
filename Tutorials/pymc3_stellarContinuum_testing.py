@@ -48,51 +48,79 @@ fit_conf = {'obs_data'                  :obsData,
             'output_folder'             :'/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/testing_output/',
             'spectra_components'        :['emission', 'nebular', 'stellar'],  # ,['emission', 'nebular', 'stellar'],
             'input_lines'               :'all',
-            'prefit_ssp'                :False,
+            'prefit_ssp'                :True,
             'prefit_data'               :None,
             'wavelengh_limits'          :[4200,6900],
             'resample_inc'              :1,
             'norm_interval'             :[5100,5150]}
 
-# Prepare fit data
+# # Prepare fit data
 specS.prepareSimulation(**fit_conf)
-myMask = np.ones( specS.obj_data['flux_norm'].size)
-specS.prepareContinuaData(ssp_starlight['wave_resam'], ssp_starlight['flux_norm'],  ssp_starlight['normFlux_coeff'],
-                          specS.obj_data['wave_resam'], specS.obj_data['flux_norm'],
-                          obsData['continuum_sigma'], myMask,
-                          nebularFlux = None, mainPopulationsFile = '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt')
+# myMask = np.ones( specS.obj_data['flux_norm'].size)
+# specS.prepareContinuaData(ssp_starlight['wave_resam'], ssp_starlight['flux_norm'],  ssp_starlight['normFlux_coeff'],
+#                           specS.obj_data['wave_resam'], specS.obj_data['flux_norm'],
+#                           obsData['continuum_sigma'], myMask,
+#                           nebularFlux = None, mainPopulationsFile = '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt')
+#
+onFluxesTreatedA = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm,
+                                      Av_star=0, z_star=obsData['z_obj'], sigma_star=obsData['sigma_star'], Rv_coeff=specS.Rv_model)
 
-specS.inputContinuumEr = 0.05
-err_synth = np.random.normal(0, specS.inputContinuumEr, size=specS.inputContinuum.size)
+onFluxesTreatedB = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm,
+                                      Av_star=0, z_star=obsData['z_obj'], sigma_star=2.5, Rv_coeff=specS.Rv_model)
+
+onFluxesTreatedC = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm,
+                                      Av_star=0, z_star=obsData['z_obj'], sigma_star=5.0, Rv_coeff=specS.Rv_model)
+
 inputMio = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm)
-inputMioWitherr = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm) + err_synth
-weights_list = ['w_i__0','w_i__1','w_i__2','w_i__3','w_i__4']
+inputMioA = onFluxesTreatedA.dot(specS.sspPrefitCoeffs)
+inputMioB = onFluxesTreatedB.dot(specS.sspPrefitCoeffs)
+inputMioC = onFluxesTreatedC.dot(specS.sspPrefitCoeffs)
 
-start_values = dict(zip(weights_list, specS.sspPrefitCoeffs))
-
-print specS.sspPrefitCoeffs
-print specS.nBases
-
-basesFlux_tt = theano.shared(specS.onBasesFluxNorm)
-with pm.Model() as model:
-
-    w_i = pm.Uniform('w_i', lower=0, upper=5, shape=specS.nBases)
-    err = pm.Uniform('err', lower = 0.0, upper = 20.0)
-    flux_i = w_i.dot(basesFlux_tt)
-
-    Y = pm.Normal('Y', mu=flux_i, sd=err, observed=inputMio)
-
-    for RV in model.basic_RVs:
-        print(RV.name, RV.logp(model.test_point))
-
-    # Launch model
-    step = pm.NUTS()
-    trace = pm.sample(10000, tune=1000, start=start_values, step=step)
-
-# Output trace data
-print pm.summary(trace)
-pm.traceplot(trace)
+fig, ax = plt.subplots(1, 1, figsize=(16, 10))
+ax.plot(specS.inputWave, inputMio, label='Input object')
+ax.plot(specS.inputWave, inputMioA, label='Input object treated orig')
+ax.plot(specS.inputWave, inputMioB, label='Input object treated double sigmaStar')
+ax.plot(specS.inputWave, inputMioC, label='Input object treated double Av')
+ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
+ax.legend()
 plt.show()
+
+# plt.fill_between(specS.inputWave, specS.inputContinuum-specS.inputContinuumEr, specS.inputContinuum+specS.inputContinuumEr, alpha = 0.5)
+
+
+
+
+# specS.inputContinuumEr = 0.05
+# err_synth = np.random.normal(0, specS.inputContinuumEr, size=specS.inputContinuum.size)
+# inputMio = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm)
+# inputMioWitherr = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm) + err_synth
+# weights_list = ['w_i__0','w_i__1','w_i__2','w_i__3','w_i__4']
+#
+# start_values = dict(zip(weights_list, specS.sspPrefitCoeffs))
+#
+# print specS.sspPrefitCoeffs
+# print specS.nBases
+#
+# basesFlux_tt = theano.shared(specS.onBasesFluxNorm)
+# with pm.Model() as model:
+#
+#     w_i = pm.Uniform('w_i', lower=0, upper=5, shape=specS.nBases)
+#     err = pm.Uniform('err', lower = 0.0, upper = 20.0)
+#     flux_i = w_i.dot(basesFlux_tt)
+#
+#     Y = pm.Normal('Y', mu=flux_i, sd=err, observed=inputMio)
+#
+#     for RV in model.basic_RVs:
+#         print(RV.name, RV.logp(model.test_point))
+#
+#     # Launch model
+#     step = pm.NUTS()
+#     trace = pm.sample(10000, tune=1000, start=start_values, step=step)
+#
+# # Output trace data
+# print pm.summary(trace)
+# pm.traceplot(trace)
+# plt.show()
 
 
 # def model(a_matrix, b_vector):
@@ -119,15 +147,15 @@ plt.show()
 #     print specS.sspPrefitCoeffs[i], bayesian_fit_coeff
 
 
-fig, ax = plt.subplots(1, 1, figsize=(16, 10))
-# ax.plot(specS.inputWave, specS.inputContinuum, label='Input object')
-ax.plot(specS.inputWave, inputMioWitherr, label='Input object')
-ax.plot(specS.inputWave, inputMio, label='my Input object', lineStyle = '--')
-
-# plt.fill_between(specS.inputWave, specS.inputContinuum-specS.inputContinuumEr, specS.inputContinuum+specS.inputContinuumEr, alpha = 0.5)
-ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
-ax.legend()
-plt.show()
+# fig, ax = plt.subplots(1, 1, figsize=(16, 10))
+# # ax.plot(specS.inputWave, specS.inputContinuum, label='Input object')
+# ax.plot(specS.inputWave, inputMioWitherr, label='Input object')
+# ax.plot(specS.inputWave, inputMio, label='my Input object', lineStyle = '--')
+#
+# # plt.fill_between(specS.inputWave, specS.inputContinuum-specS.inputContinuumEr, specS.inputContinuum+specS.inputContinuumEr, alpha = 0.5)
+# ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
+# ax.legend()
+# plt.show()
 
 
 

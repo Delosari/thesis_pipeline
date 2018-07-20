@@ -95,7 +95,8 @@ for objName in catalogue_df.loc[dz.idx_include].index:
     objDict['norm_interval']       = [4500,4550]
     objDict['Te_prior']            = [catalogue_df.loc[objName, temp_low_key + '_emis2nd'].nominal_value, catalogue_df.loc[objName, temp_low_key + '_emis2nd'].std_dev]
     objDict['ne_prior']            = [catalogue_df.loc[objName].neSII_emis2nd.nominal_value, catalogue_df.loc[objName].neSII_emis2nd.std_dev]
+    objDict['input_lines']         = 'all'
 
     # Save the data into an "ini" configuration file
-    objLogAddress = '{}/{}_objParams.txt'.format(objectNewFolder,objName,lineslog_ext)
+    objLogAddress = '{}/{}_objParams.txt'.format(objectNewFolder,objName)
     parseObjData(objLogAddress, objName, objDict)
