@@ -136,9 +136,9 @@ for objName in catalogue_df.loc[dz.idx_include].index:
 
     ax.update({'xlabel':r'Wavelength $(\AA)$', 'ylabel':'Flux ' + r'$(10^{-15} erg\,cm^{-2} s^{-1} \AA^{-1})$'})
     saving_location = '/home/vital/Dropbox/Astrophysics/Thesis/images/spectra_sample/{}_whtSpectrum.png'.format(quick_reference)
-
-    plt.savefig(saving_location, dpi=200, bbox_inches='tight')
-    plt.cla()
+    plt.show()
+    # plt.savefig(saving_location, dpi=200, bbox_inches='tight')
+    # plt.cla()
 
 #-----------------------------------------------------------------------------------------------------
 print 'All data treated', dz.display_errors()

@@ -11,6 +11,9 @@ size_dict = {'figure.figsize': (14, 6), 'axes.labelsize': 20, 'legend.fontsize':
              'mathtext.default': 'regular', 'xtick.labelsize': 20, 'ytick.labelsize': 20}
 dz.FigConf(plotSize=size_dict)
 
+
+
+
 # Declare data location
 folder_data = '/home/vital/Dropbox/Astrophysics/Seminars/Cloudy School 2017/teporingos/Grid_data_vital/'
 file_name_list_S = ['TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_S',
@@ -27,6 +30,13 @@ labels_coords_S = [[(1.60e18, 0.98), (2.35e18, 0.98)],
                    [(0.75e18, 0.000005), (2.0e18, 0.015)]]
 labels_coords_O = [[(1.55e18, 0.5), (2.3e18, 0.5)],
                    [(1.03e18, 0.6), (1.8e18, 0.6)]]
+
+
+# Generate the color map
+dz.gen_colorList(0, 5)
+# ions_colors_S = [dz.get_color(0), dz.get_color(1), dz.get_color(2)]
+# ions_colors_O = [dz.get_color(3), dz.get_color(4)]
+
 ions_colors_S = ['tab:orange', 'tab:red', 'tab:brown']
 ions_colors_O = ['tab:blue', 'tab:green']
 
