@@ -21,7 +21,7 @@ dz.quick_indexing(catalogue_df)
 root_folder = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/bayesianModel/'
 
 defaultLines = np.array(['H1_4341A','O3_4363A','Ar4_4740A','O3_4959A','O3_5007A','S3_6312A','N2_6548A','H1_6563A','N2_6584A','S2_6716A','S2_6731A','Ar3_7136A','O2_7319A','O2_7330A','S3_9069A','S3_9531A'])
-specialObjects = {'8': np.array(['H1_4341A','O3_4363A','Ar4_4740A','O3_4959A','O3_5007A','S3_6312A','N2_6548A','H1_6563A','N2_6584A','S2_6716A','S2_6731A','Ar3_7136A','O2_7319A','O2_7330A','S3_9069A','S3_9531A'])}
+specialObjects = {'8': np.array(['H1_4341A','O3_4363A','Ar4_4740A','He1_4471A', 'He2_4686A', 'O3_4959A','O3_5007A','He1_5876A', 'S3_6312A','N2_6548A','H1_6563A','N2_6584A','S2_6716A','S2_6731A', 'He1_6678A','Ar3_7136A','O2_7319A','O2_7330A','S3_9069A','S3_9531A'])}
 
 #Loop throught the objects
 for objName in catalogue_df.loc[dz.idx_include].index:

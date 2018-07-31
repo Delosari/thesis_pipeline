@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 from dazer_methods import Dazer
 from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
 from lib.Astro_Libraries.spectrum_fitting.import_functions import ImportModelData
+from scipy import stats
+from numpy.random import normal
+from scipy.optimize import curve_fit
+
+# Let's create a function to model and create data
+def gaussFunc(ind_params, a, mu, sigma):
+    x, z = ind_params
+    return a*np.exp(-((x-mu)*(x-mu))/(2*(sigma*sigma))) + z
 
 def generate_object_mask(linesDf, wavelength, linelabels):
     # TODO This will not work for a redshifted lines log
@@ -21,15 +29,17 @@ def generate_object_mask(linesDf, wavelength, linelabels):
 
     # Loop through the emission lines
     wmin, wmax = linesDf['w3'].loc[idcs_lineMasks].values, linesDf['w4'].loc[idcs_lineMasks].values
+    idxMin, idxMax = np.searchsorted(wavelength, [wmin, wmax])
     for i in range(n_lineMasks):
-        idx_currentMask = (wavelength > wmin[i]) & (wavelength < wmax[i])
+        idx_currentMask = (wavelength >= wavelength[idxMin[i]]) & (wavelength <= wavelength[idxMax[i]])
         boolean_matrix[i, :] = idx_currentMask
         int_mask = int_mask & ~idx_currentMask
 
     # Loop through the object masks
     wmin, wmax = linesDf['w3'].loc[idcs_spectrumMasks].values, linesDf['w4'].loc[idcs_spectrumMasks].values
+    idxMin, idxMax = np.searchsorted(wavelength, [wmin, wmax])
     for i in range(n_objMasks):
-        idx_currentMask = (wavelength > wmin[i]) & (wavelength < wmax[i])
+        idx_currentMask = (wavelength >= wavelength[idxMin[i]]) & (wavelength <= wavelength[idxMax[i]])
         int_mask = int_mask & ~idx_currentMask
         object_mask = object_mask & ~idx_currentMask
 
@@ -60,94 +70,84 @@ objLinesLogDf = pd.read_csv(obsData['obj_lines_file'], delim_whitespace=True, he
 
 wave = obsData['obs_wavelength']
 flux = obsData['obs_flux']
-lineLabels = objLinesLogDf.loc[:'H1_10049A','w1':'w6'].index.values
-lines_mask = generate_object_mask(objLinesLogDf, wave, lineLabels)
-normFluxCoeff = np.median(flux)
+linesDf = objLinesLogDf.loc[:'H1_9546A']
+
+lineLabels = linesDf.index.values   # TODO in here we use the lines proposed by the user
+normFluxCoeff = np.median(flux)     # TODO in here we use the norm flux from the continuum
 fluxNorm = flux/normFluxCoeff
-linesDb = pd.read_excel('/home/vital/PycharmProjects/dazer/bin/lib/Astro_Libraries/spectrum_fitting/lines_data.xlsx', sheetname=0, header=0, index_col=0)
 
-areas_matrix = objLinesLogDf.loc[:'H1_10049A','w1':'w6'].values # In here replace : by the lines actually observed
-ares_indcs = np.searchsorted(wave, areas_matrix)
+lines_mask = generate_object_mask(linesDf, wave, lineLabels)
 
-blueRegionFluxes = fluxNorm[ares_indcs[0,0]:ares_indcs[0,1]].mean() #Use the approach of idcsContinua to generate the whole arrays of true and false
-lineRegionFluxes = fluxNorm[ares_indcs[0,2]:ares_indcs[0,3]].sum()
-redRegionFluxes = fluxNorm[ares_indcs[0,4]:ares_indcs[0,5]].mean()
+areaWaveN_matrix = linesDf.loc[:,'w1':'w6'].values # TODO in here we use the lines proposed by the user
 
-blueRegionWaves = (wave[ares_indcs[0,0]] + wave[ares_indcs[0,1]]) / 2
-lineRegionWaves = (wave[ares_indcs[0,2]] + wave[ares_indcs[0,3]]) / 2
-redRegionWaves = (wave[ares_indcs[0,4]] + wave[ares_indcs[0,5]]) / 2
-
-lineContPointFluxes = blueRegionFluxes + ((redRegionFluxes-blueRegionFluxes)/(redRegionWaves-blueRegionWaves)) * (lineRegionWaves - blueRegionWaves)
-lineContFluxes = lineContPointFluxes * (wave[ares_indcs[0,3]] - wave[ares_indcs[0,2]])
-
+#Get line and adjacent continua region
+ares_indcs = np.searchsorted(wave, areaWaveN_matrix)
+idcsLines = (wave[ares_indcs[:,2]] <= wave[:,None]) & (wave[:,None] <= wave[ares_indcs[:,3]])
 idcsContinua = ((wave[ares_indcs[:,0]] <= wave[:,None]) & (wave[:,None] <= wave[ares_indcs[:,1]])) | ((wave[ares_indcs[:,4]] <= wave[:,None]) & (wave[:,None] <= wave[ares_indcs[:,5]]))
-# waveContinua = wave[idcsContinua[:,0]]
-# fluxContinua = fluxNorm[idcsContinua,None]
 
-fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-ax.plot(wave[wave<4386], fluxNorm[wave<4386], label='spectrum')
-ax.plot(wave[idcsContinua[:,0]], fluxNorm[idcsContinua[:,0]], label='spectrum')
-ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
-ax.legend()
-plt.show()
+n_randomPoints = 1000
+rangeFittings = np.arange(n_randomPoints)
+n_lines = ares_indcs.shape[0]
+recombLinesIdx = linesDf.index.str.contains('He1') + linesDf.index.str.contains('He2') + linesDf.index.str.contains('H1')
+removeContinuumCheck = True
 
-# blueRegionFluxes  fluxNorm[ares_indcs[:,0]:ares_indcs[:,1]].mean(axis=1)
-# lineRegionFluxes = fluxNorm[ares_indcs[:,0]:ares_indcs[:,1]].sum(axis=1)
-# redRegionFluxes = fluxNorm[ares_indcs[:,0]:ares_indcs[:,1]].mean(axis=1)
-#
-# blueRegionWaves = (wave[ares_indcs[:,0]] + wave[ares_indcs[:,1]]) / 2
-# lineRegionWaves = (wave[ares_indcs[:,2]] + wave[ares_indcs[:,3]]) / 2
-# redRegionWaves = (wave[ares_indcs[:,4]] + wave[ares_indcs[:,5]]) / 2
-#
-# lineContPointFluxes = redRegionFluxes + (redRegionFluxes-blueRegionFluxes)/(redRegionWaves-blueRegionWaves) * (lineRegionWaves - blueRegionWaves)
-# lineContFluxes = lineContPointFluxes * (wave[ares_indcs[:,3]] - wave[ares_indcs[:,2]])
-
-# idcsContinua = ((wave[ares_indcs[:,0]] <= wave[:,None]) & (wave[:,None] <= wave[ares_indcs[:,1]])) | ((wave[ares_indcs[:,4]] <= wave[:,None]) & (wave[:,None] <= wave[ares_indcs[:,5]]))
-
-
-# lineFluxes = np.empty(lineLabels.size)
-# linesWithAbsorption = objLinesLogDf.index.str.contains('H1_') | objLinesLogDf.index.str.contains('He1_') | objLinesLogDf.index.str.contains('He2_')
-# np.random.normal()
-# #Loop measure fluxes
-# for i in np.arange(lineLabels.size):
-#
-#     lineLabel = lineLabels[i]
-#
-#     if lineLabel not in ['H1_6563A_w', 'Upper_Edge', 'WHT_Spectra_Joining']:
-#
-#         fluxB =
-#         fluxR =
-
-
-
-
+p1_matrix = np.empty((n_randomPoints, 3))
+sqrt2pi = np.sqrt(2*np.pi)
 
 # fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-# ax.plot(wave, flux,label='spectrum')
-# for i in range(lines_mask.shape[0]):
-#     ax.plot(wave[lines_mask[i,:]], flux[lines_mask[i,:]],label=lineLabels[i])
-#     ax.scatter(wavesB[i], normFluxCoeff,label='Blue region',color='blue')
-#     ax.scatter(WavesL[i], normFluxCoeff,label='line region',color='green')
-#     ax.scatter(WavesR[i], normFluxCoeff,label='Red region',color='red')
-#
-# ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
-# ax.legend()
-# plt.show()
+for i in np.arange(n_lines):
 
-# import numpy as np
-#
-# myArray = np.arange(10)
-#
-# lowLimit = 2
-# highLimit = 5
-#
-# print myArray[lowLimit:highLimit]
-#
-# lowLimit = np.ones(10) * 2
-# highLimit = np.ones(10) * 5
-#
-# print myArray[lowLimit:highLimit:None]
-#
-# print
+    # Get line_i wave and continua
+    lineWave, lineFlux = wave[idcsLines[:,i]], fluxNorm[idcsLines[:,i]]
+    continuaWave, continuaFlux = wave[idcsContinua[:,i]], fluxNorm[idcsContinua[:,i]]
 
+    # Compute linear line continuum and get the standard deviation on the continuum
+    slope, intercept, r_value, p_value, std_err = stats.linregress(continuaWave, continuaFlux)
+    continuaFit     = continuaWave * slope + intercept
+    std_continuum   = np.std(continuaFlux - continuaFit)
+    lineContinuumFit = lineWave * slope + intercept
+    continuumInt    = lineContinuumFit.sum()
+    centerWave      = lineWave[np.argmax(lineFlux)]
+    centerContInt   = centerWave * slope + intercept
 
+    # Compute matrix with random noise from the continua standard deviation
+    normalNoise = normal(0.0, std_continuum, (n_randomPoints, lineWave.size))
+    line_iFluxMatrix = lineFlux + normalNoise
+
+    # Compute integrated flux
+    areasArray = line_iFluxMatrix.sum(axis=1)
+    integInt, integStd = areasArray.mean(), areasArray.std()
+
+    # Initial values for fit
+    p0 = (lineFlux.max(),lineWave.mean(),1.0)
+
+    # Perform fit in loop
+    for j in rangeFittings: #This one is not powerfull enought... add more points
+        p1_matrix[j], pcov = curve_fit(gaussFunc, (lineWave, lineContinuumFit), lineFlux + normalNoise[j], p0=p0)
+
+    # Compute mean values and std from gaussian fit
+    gIntArray = p1_matrix[:, 0] * p1_matrix[:, 2] * sqrt2pi
+    p1Mean, gInt = p1_matrix.mean(axis=0), gIntArray.mean()
+    p1Std, gIntStd = p1_matrix.std(axis=0), gIntArray.std()
+
+    # # Remove continuum from metallic lines
+    # if removeContinuumCheck and not recombLinesIdx[i]:
+    #     integInt = integInt - continuumInt
+    #     gInt = gInt - continuumInt
+    #
+    # resampleGaus = np.linspace(lineWave[0]-10, lineWave[-1]+10, 100)
+    # resampleContinuum = resampleGaus * slope + intercept
+    # gaussianFlux = gaussFunc((resampleGaus, resampleContinuum), *p1Mean)
+    # gaussianFlux2 = gaussFunc((resampleGaus, np.zeros(resampleGaus.size)), *p1Mean)
+    #
+    # ax.plot(lineWave, lineFlux, color='tab:red', label='lines')
+    # ax.plot(continuaWave, continuaFlux, color='tab:blue', label='continuum')
+    # ax.plot(continuaWave, continuaFit, color='tab:green', label='fit continuum')
+    # ax.plot(resampleGaus, gaussianFlux, color='tab:purple', label='gaussian fit')
+    # ax.plot(resampleGaus, gaussianFlux2, color='tab:cyan', label='gaussian fit2')
+    #
+    # ax.update({'xlabel': r'Wavelength $(\AA)$', 'ylabel': 'Flux (normalised)'})
+    # ax.legend()
+    # plt.show()
+
+    print lineLabels[i], lineFlux.sum(), (fluxNorm * lines_mask[i]).sum(), integInt, gInt + continuumInt # TODO gInt is not giving the same as the ohers

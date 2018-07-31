@@ -1,6 +1,7 @@
-testing_extensionimport os
+import os
 import sys
 from pyfits import getval
+
 sys.path.append('/home/vital/git/Dazer/Dazer/dazer/')
 os.environ['TCL_LIBRARY'] = '/home/vital/anaconda/python27/lib/tcl8.5'
 os.environ['TK_LIBRARY'] = '/home/vital/anaconda/python27/lib/tk8.5'

@@ -58,29 +58,9 @@ fit_conf = {'obs_data'                  :obsData,
 specS.prepareSimulation(**fit_conf)
 
 myMask = np.ones(specS.obj_data['flux_norm'].size)
-specS.prepareContinuaData(ssp_starlight['wave_resam'], ssp_starlight['flux_norm'],  ssp_starlight['normFlux_coeff'], specS.obj_data['wave_resam'], specS.obj_data['flux_norm'], obsData['continuum_sigma'], myMask, nebularFlux = None, mainPopulationsFile = '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt')
+# specS.prepareContinuaData(ssp_starlight['wave_resam'], ssp_starlight['flux_norm'],  ssp_starlight['normFlux_coeff'], specS.obj_data['wave_resam'], specS.obj_data['flux_norm'], obsData['continuum_sigma'], myMask, nebularFlux = None, mainPopulationsFile = '/home/vital/PycharmProjects/thesis_pipeline/spectrum_fitting/synth_stellarPop.txt')
 
-specS.onBasesFluxNorm = np.delete(specS.onBasesFluxNorm, 3, axis=0)
-
-weights_true = np.array([0.75, 1.1, 0.5, 0.2])
-flux_total = np.zeros(specS.inputWave[500:2000].size)
-
-fig, ax = plt.subplots(1, 1, figsize=(16, 10))
-for i in np.arange(specS.onBasesFluxNorm.shape[0]):
-    flux_total += weights_true[i] * specS.onBasesFluxNorm[i,500:2000]
-    ax.plot(specS.inputWave[500:2000], specS.onBasesFluxNorm[i,500:2000], label='Component {}'.format(i))
-
-ax.plot(specS.inputWave[500:2000], flux_total, label='Combined observation {}'.format(i))
-ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
-ax.legend()
-plt.show()
-
-np.set_printoptions(threshold=np.nan, precision=3)
-print specS.onBasesFluxNorm.shape
-print repr(specS.onBasesFluxNorm[:,500:2000])
-# print specS.inputWave[500:2000]
-# print np.arange(4700, 6700)
-#onFluxesTreatedA = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm, Av_star=0, z_star=obsData['z_obj'], sigma_star=obsData['sigma_star'], Rv_coeff=specS.Rv_model)
+# onFluxesTreatedA = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm, Av_star=0, z_star=obsData['z_obj'], sigma_star=obsData['sigma_star'], Rv_coeff=specS.Rv_model)
 # onFluxesTreatedB = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm, Av_star=0, z_star=obsData['z_obj'], sigma_star=2.5, Rv_coeff=specS.Rv_model)
 # onFluxesTreatedC = specS.physical_SED_model(specS.onBasesWave, specS.inputWave, specS.onBasesFluxNorm, Av_star=0, z_star=obsData['z_obj'], sigma_star=5.0, Rv_coeff=specS.Rv_model)
 #
@@ -101,66 +81,58 @@ print repr(specS.onBasesFluxNorm[:,500:2000])
 # weights_list = ['w_i__0','w_i__1','w_i__2','w_i__3','w_i__4']
 # start_values = dict(zip(weights_list, specS.sspPrefitCoeffs))
 
-# coeffs_true = specS.sspPrefitCoeffs
-# err = 0.05
-#
-# obsNoise = np.random.normal(0, err, size=specS.inputContinuum.size)
-# spectrumTrue = coeffs_true.dot(specS.onBasesFluxNorm)
-# spectrumObs = spectrumTrue + obsNoise
-# coeffs_mean = coeffs_true.copy()
-# coeffs_std = coeffs_true * 0.05
-# err_array = 0.4 * np.ones(spectrumObs.size)
-# Av_true = 0.4
-# spectrumObs = spectrumTrue * np.power(10, -0.4 * Av_true * specS.Xx_stellar)
-#
-# print '- Coefficient priors'
-# print coeffs_mean
-# print coeffs_std
-#
-# # Generate final flux model including reddening
-# # Av_vector = Av_star * np.ones(specS.onBasesFluxNorm.shape[0])
-# # dust_attenuation = np.power(10, -0.4 * np.outer(specS.Xx_stellar, Av_vector))
-# # bases_grid_redd = specS.onBasesFluxNorm.T * dust_attenuation
-# # redSpectrum = coeffs_true.dot(bases_grid_redd.T)
-#
-# # redSpectrumUp = spectrumTrue * np.power(10, -0.4 * (0.4118) * specS.Xx_stellar)
-# # redSpectrum2 = spectrumTrue * np.power(10, -0.4 * Av_true * specS.Xx_stellar)
-# # redSpectrumLow= spectrumTrue * np.power(10, -0.4 * (Av_true-0.04) * specS.Xx_stellar)
-# #
-# # fig, ax = plt.subplots(1, 1, figsize=(16, 10))
-# # ax.plot(specS.inputWave, spectrumTrue, label='Original spectrum')
-# # ax.plot(specS.inputWave, redSpectrumUp, label='Reddening Up')
-# # ax.plot(specS.inputWave, redSpectrum2, label='Reddening applied to output spec')
-# # ax.plot(specS.inputWave, redSpectrumLow, label='Reddening Low')
-# #
-# # ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
-# # ax.legend()
-# # plt.show()
-#
-# basesFlux_tt = theano.shared(specS.onBasesFluxNorm)
-# Xx_tt = theano.shared(specS.Xx_stellar)
-# wi_tt = theano.shared(coeffs_mean)
-# with pm.Model() as model:
-#
-#     w_i = pm.Normal('w_i', mu=coeffs_mean, sd=coeffs_std, shape=specS.nBases)
-#     Av_star = pm.Lognormal('Av_star', mu=1, sd=0.75)
-#     #err = pm.Normal('err', mu=0.0, sd=5, shape=specS.nBases)
-#     spectrum = w_i.dot(basesFlux_tt)
-#     spectrum_reddened = spectrum * tt.pow(10, -0.4 * Av_star * Xx_tt)
-#
-#     Y = pm.Normal('Y', mu=spectrum_reddened, sd=err_array, observed=spectrumObs)
-#
-#     for RV in model.basic_RVs:
-#         print(RV.name, RV.logp(model.test_point))
-#
-#     # Launch model
-#     step = pm.NUTS()
-#     trace = pm.sample(3000, tune=1000, step=step)
-#
-# # Output trace data
-# print pm.summary(trace)
-# pm.traceplot(trace)
+coeffs_true = specS.sspPrefitCoeffs
+err = 0.05
+
+obsNoise = np.random.normal(0, err, size=specS.inputContinuum.size)
+spectrumTrue = coeffs_true.dot(specS.onBasesFluxNorm)
+spectrumObs = spectrumTrue + obsNoise
+coeffs_mean = coeffs_true.copy()
+coeffs_std = coeffs_true * 0.05
+err_array = 0.05 * spectrumObs
+Av_true = 0.4
+spectrumObs = spectrumTrue * np.power(10, -0.4 * Av_true * specS.Xx_stellar)
+
+print '- Coefficient priors'
+print coeffs_mean
+print coeffs_std
+
+# Generate final flux model including reddening
+# redSpectrum2 = spectrumTrue * np.power(10, -0.4 * Av_true * specS.Xx_stellar)
+
+# fig, ax = plt.subplots(1, 1, figsize=(16, 10))
+# ax.plot(specS.inputWave, spectrumTrue, label='Original spectrum')
+# ax.plot(specS.inputWave, redSpectrum2, label='Reddening applied to output spec')
+# ax.plot(specS.inputWave, spectrumObs * specS.int_mask, label='Reddening applied to output spec')
+# ax.update({'xlabel': 'Wavelength (nm)', 'ylabel': 'Flux (normalised)'})
+# ax.legend()
 # plt.show()
+
+basesFlux_tt = theano.shared(specS.onBasesFluxNorm)
+Xx_tt = theano.shared(specS.Xx_stellar)
+wi_tt = theano.shared(coeffs_mean)
+
+with pm.Model() as model:
+
+    w_i = pm.Normal('w_i', mu=coeffs_mean, sd=coeffs_std, shape=specS.nBases)
+    Av_star = pm.Lognormal('Av_star', mu=1, sd=0.75)
+    #err = pm.Normal('err', mu=0.0, sd=5, shape=specS.nBases)
+    spectrum = w_i.dot(basesFlux_tt)
+    spectrum_reddened = spectrum * tt.pow(10, -0.4 * Av_star * Xx_tt)
+
+    Y = pm.Normal('Y', mu=spectrum_reddened * specS.int_mask, sd=err_array * specS.int_mask, observed=spectrumObs * specS.int_mask)
+
+    for RV in model.basic_RVs:
+        print(RV.name, RV.logp(model.test_point))
+
+    # Launch model
+    step = pm.NUTS()
+    trace = pm.sample(3000, tune=1000, step=step)
+
+# Output trace data
+print pm.summary(trace)
+pm.traceplot(trace)
+plt.show()
 
 
 # def model(a_matrix, b_vector):
