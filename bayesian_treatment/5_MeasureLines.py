@@ -118,17 +118,17 @@ for i in np.arange(n_lines):
     areasArray = line_iFluxMatrix.sum(axis=1)
     integInt, integStd = areasArray.mean(), areasArray.std()
 
-    # Initial values for fit
-    p0 = (lineFlux.max(),lineWave.mean(),1.0)
-
-    # Perform fit in loop
-    for j in rangeFittings: #This one is not powerfull enought... add more points
-        p1_matrix[j], pcov = curve_fit(gaussFunc, (lineWave, lineContinuumFit), lineFlux + normalNoise[j], p0=p0)
-
-    # Compute mean values and std from gaussian fit
-    gIntArray = p1_matrix[:, 0] * p1_matrix[:, 2] * sqrt2pi
-    p1Mean, gInt = p1_matrix.mean(axis=0), gIntArray.mean()
-    p1Std, gIntStd = p1_matrix.std(axis=0), gIntArray.std()
+    # # Initial values for fit
+    # p0 = (lineFlux.max(),lineWave.mean(),1.0)
+    #
+    # # Perform fit in loop
+    # for j in rangeFittings: #This one is not powerfull enought... add more points
+    #     p1_matrix[j], pcov = curve_fit(gaussFunc, (lineWave, lineContinuumFit), lineFlux + normalNoise[j], p0=p0)
+    #
+    # # Compute mean values and std from gaussian fit
+    # gIntArray = p1_matrix[:, 0] * p1_matrix[:, 2] * sqrt2pi
+    # p1Mean, gInt = p1_matrix.mean(axis=0), gIntArray.mean()
+    # p1Std, gIntStd = p1_matrix.std(axis=0), gIntArray.std()
 
     # # Remove continuum from metallic lines
     # if removeContinuumCheck and not recombLinesIdx[i]:
@@ -150,4 +150,4 @@ for i in np.arange(n_lines):
     # ax.legend()
     # plt.show()
 
-    print lineLabels[i], lineFlux.sum(), (fluxNorm * lines_mask[i]).sum(), integInt, gInt + continuumInt # TODO gInt is not giving the same as the ohers
+    #print lineLabels[i], lineFlux.sum(), (fluxNorm * lines_mask[i]).sum(), integInt, gInt + continuumInt # TODO gInt is not giving the same as the ohers
