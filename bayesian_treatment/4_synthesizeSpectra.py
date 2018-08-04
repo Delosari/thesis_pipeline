@@ -51,6 +51,21 @@ for objName in catalogue_df.loc[dz.idx_include].index:
         dataLocation = '{}{}/{}_objParams.txt'.format(root_folder, objName, objName)
         obsData = specS.load_obsData(dataLocation, objName)
 
+        # Set object wmin
+        if obsData['obs_wavelength'][0] < 4270 and 'SHOC' not in objName:
+            if obsData['obs_wavelength'][0] < 3600:
+                fit_conf['wavelengh_limits'][0] = 3600
+                obsData['wavelengh_limits'][0] = 3600
+            else:
+                fit_conf['wavelengh_limits'][0] = 0
+                obsData['wavelengh_limits'][0] = 0
+
+
+        # Assign nebular continuum parameters
+        specS.nebDefault['Te_neb']      = obsData['Te_prior'][0]
+        specS.nebDefault['cHbeta_neb']  = obsData['cHbeta_prior']
+        specS.nebDefault['flux_halpha'] = obsData['flux_halpha']
+
         # Treat the stellar database for the object
         sigma_prefit = obsData['sigma_star_prefit'][0]
 
@@ -71,10 +86,17 @@ for objName in catalogue_df.loc[dz.idx_include].index:
         fit_conf['input_lines'] = obsData['input_lines']
         fit_conf['prefit_data'] = dataFolder
         fit_conf['output_folder'] = objectFolder
-        fit_conf['spectra_components'] = ['emission','stellar', 'nebular']
+        fit_conf['spectra_components'] = ['emission', 'stellar', 'nebular']
 
         # Prepare fit data
         specS.prepareSimulation(**fit_conf)
+
+        #Fit the data
+        model_name = objName + '_MetalsOnly'
+        output_folder = objectFolder + 'output_data/'
+        specS.fitSpectra(model_name=model_name, iterations=4000, tuning=3000, output_folder=output_folder)
+
+
 
         # Av_starPrefit = specS.stellarAv_prior[0]
         # prefitContinuum = specS.sspPrefitCoeffs.dot(specS.onBasesFluxNorm) * np.power(10, -0.4 * Av_starPrefit * specS.Xx_stellar)
@@ -89,9 +111,3 @@ for objName in catalogue_df.loc[dz.idx_include].index:
         # plt.show()
         # for i in specS.range_bases:
         #     ax.plot(specS.inputWave, specS.onBasesFluxNorm[i,:] * specS.sspPrefitCoeffs[i], label='base {}'.format(i))
-
-        #Fit the data
-        model_name = objName + '_MetalsOnly'
-        output_folder = objectFolder + 'output_data/'
-        specS.fitSpectra(model_name=model_name, iterations=4000, tuning=3000, output_folder=output_folder)
-
