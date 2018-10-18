@@ -47,39 +47,39 @@ ssp_starlight = specS.load_ssp_library(**starlight_ssp)
 failing_objects = []
 for objName in catalogue_df.loc[dz.idx_include].index:
 
-    # try:
-    #     if objName == 'SDSS3':
+        if objName == '8':
+            print objName
             objectFolder = '{}{}/'.format(root_folder, objName)
             dataLocation = '{}{}/{}_objParams.txt'.format(root_folder, objName, objName)
             obsData = specS.load_obsData(dataLocation, objName)
             obsData['wavelengh_limits'][0] = 0 # TODO this value is inherited from previous object. It must be recheck
             fit_conf['wavelengh_limits'][0] = 0
 
-            # Set object wmin
-            if obsData['obs_wavelength'][0] < 4270 and 'SHOC' not in objName:
-                if obsData['obs_wavelength'][0] < 3600:
-                    fit_conf['wavelengh_limits'][0] = 3600
-                    obsData['wavelengh_limits'][0] = 3600
-                else:
-                    fit_conf['wavelengh_limits'][0] = 0
-                    obsData['wavelengh_limits'][0] = 0
+            # # Set object wmin
+            # if obsData['obs_wavelength'][0] < 4270 and 'SHOC' not in objName:
+            #     if obsData['obs_wavelength'][0] < 3600:
+            #         fit_conf['wavelengh_limits'][0] = 3600
+            #         obsData['wavelengh_limits'][0] = 3600
+            #     else:
+            #         fit_conf['wavelengh_limits'][0] = 0
+            #         obsData['wavelengh_limits'][0] = 0
 
-                print '\nTreating {}'.format(objName)
+            print '\nTreating {}'.format(objName)
 
-                # Assign nebular continuum parameters
-                specS.nebDefault['Te_neb']      = obsData['Te_prior'][0]
-                specS.nebDefault['cHbeta_neb']  = obsData['cHbeta_prior']
-                specS.nebDefault['flux_halpha'] = obsData['flux_halpha']
+            # Assign nebular continuum parameters
+            specS.nebDefault['Te_neb']      = obsData['Te_prior'][0]
+            specS.nebDefault['cHbeta_neb']  = obsData['cHbeta_prior']
+            specS.nebDefault['flux_halpha'] = obsData['flux_halpha']
 
-                # Declaring configuration format
-                fit_conf['obs_data'] = obsData
-                fit_conf['ssp_data'] = ssp_starlight
-                fit_conf['prefit_data'] = dataFolder
-                fit_conf['output_folder'] = objectFolder
-                fit_conf['spectra_components'] = ['stellar', 'nebular', 'emission']
+            # Declaring configuration format
+            fit_conf['obs_data'] = obsData
+            fit_conf['ssp_data'] = ssp_starlight
+            fit_conf['prefit_data'] = dataFolder
+            fit_conf['output_folder'] = objectFolder
+            fit_conf['spectra_components'] = ['stellar', 'nebular', 'emission']
 
-                # Prepare fit data
-                specS.prepareSimulation(**fit_conf)
+            # Prepare fit data
+            specS.prepareSimulation(**fit_conf)
 
 #     except:
 #         failing_objects.append(objName)

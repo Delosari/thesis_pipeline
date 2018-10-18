@@ -125,6 +125,9 @@ for i in range(len(Regresions_dict['Regressions'])):
     x               = catalogue_df.loc[idces_metal, metal_x].values * Regresions_dict['factor'][i]
     y               = catalogue_df.loc[idces_metal, helium_y].values
     quick_ref       = catalogue_df.loc[idces_metal].quick_index
+    print 'Doing element', element
+    for idx in range(len(x)):
+        print objects[idx], x[idx].nominal_value, x[idx].std_dev, y[idx].nominal_value, y[idx].std_dev
 
     #Get the data for the excees N/O objects
     NO_excess_idcs  = ((catalogue_df[element + '_valid'] == 'NO_excess') | (catalogue_df[element + '_valid'] == 'ignored')) & (catalogue_df[metal_x].notnull()) & (catalogue_df[helium_y].notnull())

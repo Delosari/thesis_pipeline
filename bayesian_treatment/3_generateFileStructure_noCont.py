@@ -13,7 +13,7 @@ bp = Basic_plots()
 # Files naming
 whtSpreadSheet = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx'
 spectrum_ext = '_ext'
-lineslog_ext = '_WHT_linesLog_reduc.txt'
+lineslog_ext = '_WHT_linesLog_emission_2nd.txt'
 masklog_ext = '_Mask.lineslog'
 
 # Load observational data
@@ -88,7 +88,7 @@ for objName in catalogue_df.loc[dz.idx_include].index:
         make_folder(plotFolder)
         plotAddress = '{}{}_lineGrid'.format(plotFolder, objName)
 
-        bp.linesGrid(linesLogDf, wave, flux, plotAddress)
+        bp.linesGrid_noContinuum(linesLogDf, wave, flux, plotAddress)
         linesLogDf['line_Flux'] = nominal_values(lineFluxes)
 
         # Add continuum masks
@@ -125,9 +125,9 @@ for objName in catalogue_df.loc[dz.idx_include].index:
         objDict['Normalized_by_Hbeta'] = False
         objDict['eqw_hbeta']           = linesLogDf.loc['H1_4861A'].eqw
         objDict['sigma_gas']           = linesLogDf.loc['O3_5007A'].sigma
-        objDict['ne_SII']              = catalogue_df.loc[objName].neSII_emis2nd.nominal_value
-        objDict['T_SIII']              = catalogue_df.loc[objName, temp_low_key + '_emis2nd'].nominal_value
-        objDict['T_OIII']              = catalogue_df.loc[objName, temp_high_key + '_emis2nd'].nominal_value
+        objDict['n_e']                 = catalogue_df.loc[objName].neSII_emis2nd.nominal_value
+        objDict['T_low']               = catalogue_df.loc[objName, temp_low_key + '_emis2nd'].nominal_value
+        objDict['T_high']              = catalogue_df.loc[objName, temp_high_key + '_emis2nd'].nominal_value
         objDict['cHbeta_prior']        = catalogue_df.loc[objName].cHbeta_emis.nominal_value
         objDict['z_obj']               = 0
         objDict['Av_star']             = None
