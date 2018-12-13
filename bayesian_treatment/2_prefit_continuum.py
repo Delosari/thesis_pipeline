@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import ConfigParser
 from dazer_methods import Dazer
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
+from lib.inferenceModel import SpectraSynthesizer
 from lib.Astro_Libraries.spectrum_fitting.import_functions import parseObjData
 
 # Declare synthesizer object

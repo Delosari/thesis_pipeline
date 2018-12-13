@@ -2,10 +2,8 @@ import numpy as np
 import pandas as pd
 import uncertainties as un
 from dazer_methods import Dazer
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
-import matplotlib.pyplot as plt
-from uncertainties.umath import pow as umath_pow, log10 as umath_log10, exp as umath_exp, isnan as un_isnan
-from uncertainties.unumpy import uarray, nominal_values, std_devs, log10 as unum_log10, pow as unnumpy_pow
+from lib.inferenceModel import SpectraSynthesizer
+from uncertainties.umath import pow as umath_pow, log10 as umath_log10, isnan as un_isnan
 from collections import OrderedDict
 
 def load_unVariables(df, obj_idx, variable_keys):

@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from dazer_methods import Dazer
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
 from lib.Astro_Libraries.spectrum_fitting.import_functions import ImportModelData
 from scipy import stats
 from numpy.random import normal
-from scipy.optimize import curve_fit
+
 
 # Let's create a function to model and create data
 def gaussFunc(ind_params, a, mu, sigma):

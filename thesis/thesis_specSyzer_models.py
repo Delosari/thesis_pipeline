@@ -1,5 +1,5 @@
 import numpy as np
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
+from lib.inferenceModel import SpectraSynthesizer
 
 # Declare synthesizer object
 specS = SpectraSynthesizer()

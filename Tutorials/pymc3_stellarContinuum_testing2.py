@@ -5,7 +5,7 @@ import theano.tensor as tt
 import pymc3 as pm
 import numpy as np
 import matplotlib.pyplot as plt
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
+from lib.inferenceModel import SpectraSynthesizer
 import pymc as pm2
 
 specS = SpectraSynthesizer()

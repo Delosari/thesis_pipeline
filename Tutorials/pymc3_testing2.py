@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pyneb_tests import EmissivitySurfaceFitter
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
+from lib.inferenceModel import SpectraSynthesizer
 from lib.Astro_Libraries.spectrum_fitting.gasEmission_functions import TOIII_TSIII_relation
 from numpy import log10
 from collections import OrderedDict

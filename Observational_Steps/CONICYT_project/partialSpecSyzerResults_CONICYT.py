@@ -1,8 +1,6 @@
 import numpy as np
 from dazer_methods import Dazer
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
-import matplotlib.pyplot as plt
-
+from lib.inferenceModel import SpectraSynthesizer
 
 # Import library object
 dz = Dazer()

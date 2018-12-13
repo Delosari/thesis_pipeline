@@ -1,124 +1,126 @@
 import numpy as np
-from lib.Astro_Libraries.spectrum_fitting.inferenceModel import SpectraSynthesizer
+from lib.inferenceModel import SpectraSynthesizer
 
 # Declare synthesizer object
 specS = SpectraSynthesizer()
 
 # Object data to prepare a synthetic observation
-synth_data = {'spectra_components'      :['emission','nebular','stellar'],
-              'wavelengh_limits'        :[4000,6900],
-              'resample_inc'            :1,
-              'norm_interval'           :[5100,5150],
-              'output_folder'           :'/home/vital/SpecSynthesizer_data/article_YpBayesian/',
-              'obs_name'                :'synthTestHIIgalaxy',
-              'obj_lines_file'          :'/home/vital/PycharmProjects/thesis_pipeline/article2_material/synth_TestObjLines.txt',
-              'obj_properties_file'     :'/home/vital/PycharmProjects/thesis_pipeline/article2_material/synth_TestObjProperties.txt',
-              'ssp_lib_type'            :'starlight',  # TODO In here we will add "test" for the pip
-              'data_folder'             :'/home/vital/Starlight/Bases/',
-              'data_file'               :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
-              'obj_ssp_coeffs_file'     :'/home/vital/PycharmProjects/thesis_pipeline/article2_material/synth_StellarPop.txt',
-              'error_stellarContinuum'  :0.01,
-              'error_lines'             :0.02}
-#
-# # Generate the synthetic data
+synth_data ={'obs_name'                 :'synthTestHIIgalaxy',
+             'output_folder'            :'/ho'
+                                         'me/vital/SpecSynthesizer_data/article_YpBayesian/',
+             'obj_properties_file'      :'/home/vital/PycharmProjects/thesis_pipeline/article2_material/synth_TestObjProperties.txt',
+             'obj_lines_file'           :'/home/vital/PycharmProjects/thesis_pipeline/article2_material/synth_TestObjLines.txt',
+             'wavelengh_limits'         :[4000, 6900],
+             'resample_inc'             :1,
+             'norm_interval'            :[5100, 5150],
+             'ssp_lib_type'             :'starlight',
+             'ssp_folder'               :'/home/vital/Starlight/Bases/',
+             'ssp_file'                 :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
+             'obj_ssp_coeffs_file'      :'/home/vital/PycharmProjects/thesis_pipeline/article2_material/synth_StellarPop.txt',
+             'error_stellarContinuum'   :0.01,
+             'error_lines'              :0.02,
+             'atomic_data'              :None,
+             'ftau_coeffs'              :None}
+
+# Generate the synthetic data
 specS.gen_synth_obs(**synth_data)
 
-# Import observation
-data_address = '/home/vital/SpecSynthesizer_data/article_YpBayesian/' + 'synthTestHIIgalaxy' + '_objParams.txt'
-obsData = specS.load_obsData(data_address, 'synthTestHIIgalaxy')
-
-# Import stellar library data
-starlight_ssp = {'ssp_lib_type'         :'starlight',  # TODO In here we will add "test" for the pip
-                'data_folder'           :'/home/vital/Starlight/Bases/',
-                'data_file'             :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
-                'wavelengh_limits'      :[3600, 6900],
-                'resample_inc'          :1,
-                'norm_interval'         :[5100, 5150]}
-ssp_starlight = specS.load_ssp_library(**starlight_ssp)
-
-#-----------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------------------
-
-# Only sulfur case
-idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3'])
-fittingLines = np.squeeze(specS.linesDb.loc[idcsLineTest].index.values,)
-outpuFolder = '/home/vital/SpecSynthesizer_data/article_YpBayesian/'
-simuName = '1_Sulfur'
-specS.NoReddening = True
-
-# Simulation Data
-fit_conf = dict(obs_data=obsData,
-                ssp_data=ssp_starlight,
-                output_folder=outpuFolder,
-                spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
-                input_lines=fittingLines,
-                prefit_ssp=False,
-                prefit_data=outpuFolder,
-                wavelengh_limits=[4200, 6900],
-                resample_inc=1,
-                norm_interval=[5100, 5150])
-
-# Prepare fit data
-specS.prepareSimulation(**fit_conf)
-
-# Run the simulation
-specS.fitSpectra(model_name=simuName, iterations=6000, tuning=2000, output_folder=outpuFolder)
+# # Import observation
+# data_address = '/home/vital/SpecSynthesizer_data/article_YpBayesian/' + 'synthTestHIIgalaxy' + '_objParams.txt'
+# obsData = specS.load_obsData(data_address, 'synthTestHIIgalaxy')
+#
+# # Import stellar library data
+# starlight_ssp = {'ssp_lib_type'         :'starlight',  # TODO In here we will add "test" for the pip
+#                 'data_folder'           :'/home/vital/Starlight/Bases/',
+#                 'data_file'             :'/home/vital/Starlight/Bases/Dani_Bases_Extra_short.txt',
+#                 'wavelengh_limits'      :[3600, 6900],
+#                 'resample_inc'          :1,
+#                 'norm_interval'         :[5100, 5150]}
+# ssp_starlight = specS.load_ssp_library(**starlight_ssp)
 
 #-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
 
-#Oxygen
-idcsLineTest = (specS.linesDb.ion.isin(['O3'])) #& (specS.linesDb.index != 'O3_5007A') #specS.linesDb.ion.isin(['O3'])
-fittingLines = np.squeeze(specS.linesDb.loc[idcsLineTest].index.values,)
-outpuFolder = '/home/vital/SpecSynthesizer_data/article_YpBayesian/'
-simuName = '2_Oxygen'
-specS.NoReddening = True
-print fittingLines
-
-# Simulation Data
-fit_conf = dict(obs_data=obsData,
-                ssp_data=ssp_starlight,
-                output_folder=outpuFolder,
-                spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
-                input_lines=fittingLines,
-                prefit_ssp=False,
-                prefit_data=outpuFolder,
-                wavelengh_limits=[4200, 6900],
-                resample_inc=1,
-                norm_interval=[5100, 5150])
-
-# Prepare fit data
-specS.prepareSimulation(**fit_conf)
-
-# Run the simulation
-specS.fitSpectra(model_name=simuName, iterations=4000, tuning=2000, output_folder=outpuFolder)
+# # Only sulfur case
+# idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3'])
+# fittingLines = np.squeeze(specS.linesDb.loc[idcsLineTest].index.values,)
+# outpuFolder = '/home/vital/SpecSynthesizer_data/article_YpBayesian/'
+# simuName = '1_Sulfur'
+# specS.NoReddening = True
+#
+# # Simulation Data
+# fit_conf = dict(obs_data=obsData,
+#                 ssp_data=ssp_starlight,
+#                 output_folder=outpuFolder,
+#                 spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
+#                 input_lines=fittingLines,
+#                 prefit_ssp=False,
+#                 prefit_data=outpuFolder,
+#                 wavelengh_limits=[4200, 6900],
+#                 resample_inc=1,
+#                 norm_interval=[5100, 5150])
+#
+# # Prepare fit data
+# specS.prepareSimulation(**fit_conf)
+#
+# # Run the simulation
+# specS.fitSpectra(model_name=simuName, iterations=6000, tuning=2000, output_folder=outpuFolder)
 
 #-----------------------------------------------------------------------------------------------------------------------
 
-# All metals
-idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3', 'O2', 'O3','N2', 'Ar3', 'Ar4'])
-fittingLines = np.squeeze(specS.linesDb.loc[idcsLineTest].index.values,)
-outpuFolder = '/home/vital/SpecSynthesizer_data/article_YpBayesian/'
-simuName = '3_Metals'
-specS.NoReddening = True
-print fittingLines
+# #Oxygen
+# idcsLineTest = (specS.linesDb.ion.isin(['O3'])) #& (specS.linesDb.index != 'O3_5007A') #specS.linesDb.ion.isin(['O3'])
+# fittingLines = np.squeeze(specS.linesDb.loc[idcsLineTest].index.values,)
+# outpuFolder = '/home/vital/SpecSynthesizer_data/article_YpBayesian/'
+# simuName = '2_Oxygen'
+# specS.NoReddening = True
+# print fittingLines
+#
+# # Simulation Data
+# fit_conf = dict(obs_data=obsData,
+#                 ssp_data=ssp_starlight,
+#                 output_folder=outpuFolder,
+#                 spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
+#                 input_lines=fittingLines,
+#                 prefit_ssp=False,
+#                 prefit_data=outpuFolder,
+#                 wavelengh_limits=[4200, 6900],
+#                 resample_inc=1,
+#                 norm_interval=[5100, 5150])
+#
+# # Prepare fit data
+# specS.prepareSimulation(**fit_conf)
+#
+# # Run the simulation
+# specS.fitSpectra(model_name=simuName, iterations=4000, tuning=2000, output_folder=outpuFolder)
 
-# Simulation Data
-fit_conf = dict(obs_data=obsData,
-                ssp_data=ssp_starlight,
-                output_folder=outpuFolder,
-                spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
-                input_lines=fittingLines,
-                prefit_ssp=False,
-                prefit_data=outpuFolder,
-                wavelengh_limits=[4200, 6900],
-                resample_inc=1,
-                norm_interval=[5100, 5150])
+#-----------------------------------------------------------------------------------------------------------------------
 
-# Prepare fit data
-specS.prepareSimulation(**fit_conf)
-
-# Run the simulation
-specS.fitSpectra(model_name=simuName, iterations=6000, tuning=2000, output_folder=outpuFolder)
+# # All metals
+# idcsLineTest = specS.linesDb.ion.isin(['S2', 'S3', 'O2', 'O3','N2', 'Ar3', 'Ar4'])
+# fittingLines = np.squeeze(specS.linesDb.loc[idcsLineTest].index.values,)
+# outpuFolder = '/home/vital/SpecSynthesizer_data/article_YpBayesian/'
+# simuName = '3_Metals'
+# specS.NoReddening = True
+# print fittingLines
+#
+# # Simulation Data
+# fit_conf = dict(obs_data=obsData,
+#                 ssp_data=ssp_starlight,
+#                 output_folder=outpuFolder,
+#                 spectra_components=['emission'], #['emission', 'nebular', 'stellar'],
+#                 input_lines=fittingLines,
+#                 prefit_ssp=False,
+#                 prefit_data=outpuFolder,
+#                 wavelengh_limits=[4200, 6900],
+#                 resample_inc=1,
+#                 norm_interval=[5100, 5150])
+#
+# # Prepare fit data
+# specS.prepareSimulation(**fit_conf)
+#
+# # Run the simulation
+# specS.fitSpectra(model_name=simuName, iterations=6000, tuning=2000, output_folder=outpuFolder)
 
 #-----------------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
