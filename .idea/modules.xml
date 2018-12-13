@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../Dazer/Dazer/.idea/Dazer.iml" filepath="$PROJECT_DIR$/../../Dazer/Dazer/.idea/Dazer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../dazer/.idea/Dazer.iml" filepath="$PROJECT_DIR$/../dazer/.idea/Dazer.iml" />
+      <module fileurl="file://$USER_HOME$/Dazer/Dazer/.idea/Dazer.iml" filepath="$USER_HOME$/Dazer/Dazer/.idea/Dazer.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Thesis_Pipeline.iml" filepath="$PROJECT_DIR$/.idea/Thesis_Pipeline.iml" />
     </modules>
   </component>
