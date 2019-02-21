@@ -141,8 +141,7 @@ for obj_group in [['8', 'SHOC579']]:
         #row_cHbeta  += ['', cHbeta_reduc_entry, cHbeta_emis_entry]
         row_cHbeta  += ['', cHbeta_emis_entry, '']
         print cHbeta_emis_entry
-        
-        
+
     dz.addTableRow(row_F, last_row = False)
     dz.addTableRow(row_clean, last_row = False)
     dz.addTableRow(row_cHbeta, last_row = True) 
