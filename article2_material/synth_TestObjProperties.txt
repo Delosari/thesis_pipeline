@@ -5,9 +5,9 @@ Av_star		0.754
 sigma_gas	2.255
 flux_hbeta	5e-14
 eqw_hbeta	155.0
-n_e		    255.0
+n_e_true    255.0
 tau		    0.875
-T_low		14500.0
+T_low_true	14500.0
 cHbeta		0.125
 cHbeta_error	0.02
 TSIII		12000.0

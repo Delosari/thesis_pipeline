@@ -6,8 +6,11 @@ from lib.Astro_Libraries.spectrum_fitting.import_functions import make_folder
 dz = Dazer()
 
 # Declare data location
-root_folder = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\bayesianModel\\'
-whtSpreadSheet = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\WHT_Galaxies_properties.xlsx'
+# root_folder = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\bayesianModel\\'
+# whtSpreadSheet = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\WHT_Galaxies_properties.xlsx'
+root_folder = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/bayesianModel/'
+whtSpreadSheet = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx'
+
 
 # Import data
 catalogue_dict = dz.import_catalogue()
@@ -30,7 +33,7 @@ for objName in catalogue_df.index:
             specS = SpectraSynthesizer()
 
             # Declare object folder
-            objectFolder = '{}{}\\'.format(root_folder, objName)
+            objectFolder = '{}{}/'.format(root_folder, objName)#'{}{}\\'.format(root_folder, objName)
 
             # Declare configuration file
             dataFileAddress = '{}{}_objParams.txt'.format(objectFolder, objName)
@@ -51,4 +54,4 @@ for objName in catalogue_df.index:
             specS.prepareSimulation(**fit_conf)
 
             # Run the simulation
-            specS.fitSpectra(model_name='simuName', iterations=6000, tuning=3000, include_reddening=reddening_check, include_Thigh_prior=Thigh_check)
+            specS.fitSpectra(model_name= objName + '_HMC_fit_v1', iterations=6000, tuning=3000, include_reddening=reddening_check, include_Thigh_prior=Thigh_check)
