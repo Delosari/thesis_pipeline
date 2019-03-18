@@ -107,14 +107,14 @@ data, lineTags = [], []
 lineLabelList = linesDf_reduc.index.values #['H1_6563A', 'He1_5876A']
 
 for lineLabel in lineLabelList:
-    print lineLabel
     if lineLabel not in ['H1_3889A', 'He1_4388A', 'He1_4388A', 'He1_4438A']:
         line_F, line_emisF = linesDf_reduc.loc[lineLabel].iloc[2::].values, linesDf_emis.loc[lineLabel].iloc[2::].values
 
         ionTag = linformat_df.loc[lineLabel, 'latex_format']
         labelTag = linformat_df.loc[lineLabel, 'latex_format']
         wave = 4861.0 if lineLabel == 'H1_4861A' else linformat_df.loc[lineLabel, 'lambda_theo']
-        line_label = r'{} ${}$'.format(int(round(wave, 0)), ionTag)
+        n_items = np.count_nonzero(~np.isnan(unumpy.nominal_values(line_F)))
+        line_label = r'{} ${}$'.format(int(round(wave, 0)), ionTag) + "\n" + "{} HIIGs".format(n_items)
 
         diff = (1.0 - line_F / line_emisF) * 100
         diff_nv = unumpy.nominal_values(diff)
@@ -131,24 +131,3 @@ dz.Axis.set_ylabel(r'Intensity increment percentage')
 dz.savefig(saving_folder + 'recombinationAbsorption')
 
 # dz.display_fig()
-
-# #Loop through the lines wavelength
-# for objName in catalogue_df.loc[dz.idx_include].index:
-#
-#     lineLabel = 'He1_5876A'
-#     line_F, line_emisF = linesDf_reduc.loc[lineLabel, objName], linesDf_emis.loc[lineLabel, objName]
-#     diff = (1.0 - line_F / line_emisF) * 100
-#
-#     print objName,  line_F.nominal_value, line_emisF.nominal_value, diff.nominal_value
-#
-# unumpy.nominal_values()
-
-unc.unumpy
-    # lineWave = linesDf_reduc.iloc[i].wavelength
-    # diffPercentage = linesDf_reduc.iloc[i, 2:].values
-    #
-    # # Remove nan entries
-    # diffPercentage = diffPercentage[~isnull(diffPercentage)]
-    #
-    # print lineLabel, lineWave, diffPercentage
-
