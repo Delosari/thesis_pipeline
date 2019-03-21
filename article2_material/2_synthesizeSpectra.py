@@ -4,6 +4,7 @@ from lib.Astro_Libraries.spectrum_fitting.import_functions import make_folder
 
 # Import functions
 dz = Dazer()
+specS = SpectraSynthesizer()
 
 # Declare data location
 root_folder = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\bayesianModel\\' # root_folder = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/bayesianModel/'
@@ -14,7 +15,7 @@ catalogue_dict = dz.import_catalogue()
 catalogue_df = dz.load_excel_DF(whtSpreadSheet)
 
 default_lines = ['H1_4341A', 'H1_6563A', 'He1_4471A', 'He1_5876A', 'He1_6678A',
-       'He2_4686A', 'O2_7319A', 'O2_7330A', 'O3_4363A', 'O3_4959A',
+       'He2_4686A', 'O2_7319A', 'O2_7319A_b', 'O2_7330A', 'O3_4363A', 'O3_4959A',
        'O3_5007A', 'N2_6548A', 'N2_6584A', 'S2_6716A', 'S2_6731A',
        'S3_6312A', 'S3_9069A', 'S3_9531A', 'Ar3_7136A', 'Ar4_4740A']
 
@@ -38,8 +39,7 @@ for i in range(sampleObjects.size):
 
     print '- Treating object {}: {} {}'.format(i, objName, quick_reference)
 
-    if objName == '4_n1':
-    #if i == 21:
+    if i == 16:
 
         # Generate spectra synthesizer object
         specS = SpectraSynthesizer()
@@ -68,3 +68,4 @@ for i in range(sampleObjects.size):
         specS.fitSpectra(model_name=objName + '_HMC_fit_v2', iterations=6000, tuning=3000,
                          include_reddening=obsData['redening_check'], include_Thigh_prior=obsData['Thigh_check'])
 
+        print '- Finished object {}: {} {}'.format(i, objName, quick_reference)

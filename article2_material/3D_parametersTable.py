@@ -16,12 +16,11 @@ def checkDictValue(inputDict, variable, emptyValue='-'):
 
 # Headers
 headers_dic = OrderedDict()
-headers_dic['He_abund'] = r'$\nicefrac{He}{H}$'
-headers_dic['Ymass_O'] = r'$Y_{\left(\nicefrac{O}{H}\right)}$'
-headers_dic['Ymass_S'] = r'$Y_{\left(\nicefrac{S}{H}\right)}$'
-headers_dic['O_abund'] = r'$12 + log\left(\nicefrac{O}{H}\right)$'
-headers_dic['N_abund'] = r'$12 + log\left(\nicefrac{N}{H}\right)$'
-headers_dic['S_abund'] = r'$12 + log\left(\nicefrac{S}{H}\right)$'
+headers_dic['n_e'] = r'$n_{e}[SII](cm^{-3})$'
+headers_dic['T_low'] = r'$T_{e}[SIII](K)$'
+headers_dic['T_high'] = r'$T_{e}[OIII](K)$'
+headers_dic['cHbeta'] = r'$c(H\beta)$'
+# headers_dic['tau'] = r'$\tau$'
 varsNum = len(headers_dic)
 headers_format = ['HII Galaxy'] + headers_dic.values()
 
@@ -31,6 +30,7 @@ specS = SpectraSynthesizer()
 
 # Declare data location
 root_folder = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\bayesianModel\\'  # root_folder = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/bayesianModel/'
+article_folder = 'E:\\Dropbox\\Astrophysics\\Papers\\Yp_BayesianMethodology\\source files\\tables\\'
 whtSpreadSheet = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\WHT_Galaxies_properties.xlsx'  # whtSpreadSheet = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx'
 
 # Import data
@@ -41,12 +41,14 @@ catalogue_df = dz.load_excel_DF(whtSpreadSheet)
 dz.quick_indexing(catalogue_df)
 
 # Sample objects
-excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS1', 'SHOC36']  # SHOC579, SHOC575, SHOC220, SHOC588, SHOC592, SHOC036
+excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS3', 'SDSS1', 'SHOC36']  # SHOC579, SHOC575, SHOC220, SHOC588, SHOC592, SHOC036
 sampleObjects = catalogue_df.loc[dz.idx_include & ~catalogue_df.index.isin(excludeObjects)].index.values
 
 # Generate pdf
-dz.create_pdfDoc(root_folder + 'elementalAbundance', pdf_type='table')
-dz.pdfDoc.packages.append(Package('nicefrac'))
+tableAddress = article_folder + 'modelParameters'
+# print('Creating table in {}'.format(tableAddress))
+# dz.create_pdfDoc(tableAddress, pdf_type='table')
+# dz.pdfDoc.packages.append(Package('nicefrac'))
 dz.pdf_insert_table(headers_format)
 
 # Loop through the objects
@@ -63,6 +65,16 @@ for i in range(sampleObjects.size):
     dataFileAddress = '{}{}_objParams.txt'.format(objectFolder, objName)
     obsData = specS.load_obsData(dataFileAddress, objName)
 
+    # Adapt the temperature
+    Tlow_key, Thigh_key = catalogue_df.loc[objName].T_low, catalogue_df.loc[objName].T_high
+
+    # # Case with a sulfur temperature
+    # if (Tlow_key == 'TeSIII') and  (Tlow_key == 'TeOIII_from_TeSIII'):
+
+    # Case with an oxygen temperature
+    if (Tlow_key == 'TeSIII_from_TeOIII') and (Thigh_key == 'TeOIII'):
+        obsData['T_high'] = obsData.pop('T_low', '-')
+
     # Load observational data
     row_i = [quick_reference] + ['-'] * varsNum
     keys_list = headers_dic.keys()
@@ -72,5 +84,5 @@ for i in range(sampleObjects.size):
 
     dz.addTableRow(row_i, last_row=False if sampleObjects[-1] != objName else True, rounddig=3, rounddig_er=1)
 
-dz.generate_pdf()
-# dz.generate_pdf(output_address=pdf_address)
+# dz.generate_pdf()
+dz.generate_pdf(output_address=tableAddress)

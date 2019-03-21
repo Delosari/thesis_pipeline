@@ -16,11 +16,11 @@ def checkDictValue(inputDict, variable, emptyValue='-'):
 
 # Headers
 headers_dic                     = OrderedDict()
-headers_dic['S2']          = r'$12 + log\left(\nicefrac{S^{+}}{H^{+}}\right)$'
-headers_dic['S3']         = r'$12 + log\left(\nicefrac{S^{2+}}{H^{+}}\right)$'
-headers_dic['ICF_SIV']          = r'$ICF\left(S^{3+}\right)$'
-headers_dic['Ar3']        = r'$12 + log\left(\nicefrac{Ar^{2+}}{H^{+}}\right)$'
-headers_dic['Ar4']         = r'$12 + log\left(\nicefrac{Ar^{3+}}{H^{+}}\right)$'
+headers_dic['He1r'] = r'$\nicefrac{He^{+}}{H^{+}}$'
+headers_dic['He2r'] = r'$\nicefrac{He^{2+}}{H^{+}}$'
+headers_dic['O2']   = r'$12 + log\left(\nicefrac{O^{+}}{H^{+}}\right)$'
+headers_dic['O3']   = r'$12 + log\left(\nicefrac{O^{2+}}{H^{+}}\right)$'
+headers_dic['N2']   = r'$12 + log\left(\nicefrac{N^{+}}{H^{+}}\right)$'
 varsNum = len(headers_dic)
 headers_format = ['HII Galaxy'] + headers_dic.values()
 
@@ -29,7 +29,10 @@ dz = Dazer()
 specS = SpectraSynthesizer()
 
 # Declare data location
+
+# Declare data location
 root_folder = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\bayesianModel\\'  # root_folder = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/bayesianModel/'
+article_folder = 'E:\\Dropbox\\Astrophysics\\Papers\\Yp_BayesianMethodology\\source files\\tables\\'
 whtSpreadSheet = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\WHT_Galaxies_properties.xlsx'  # whtSpreadSheet = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx'
 
 # Import data
@@ -40,12 +43,14 @@ catalogue_df = dz.load_excel_DF(whtSpreadSheet)
 dz.quick_indexing(catalogue_df)
 
 # Sample objects
-excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS1', 'SHOC36']  # SHOC579, SHOC575, SHOC220, SHOC588, SHOC592, SHOC036
+excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS3', 'SDSS1', 'SHOC36']  # SHOC579, SHOC575, SHOC220, SHOC588, SHOC592, SHOC036
 sampleObjects = catalogue_df.loc[dz.idx_include & ~catalogue_df.index.isin(excludeObjects)].index.values
 
 # Generate pdf
-dz.create_pdfDoc(root_folder + 'ionicAbundanceArS', pdf_type='table')
-dz.pdfDoc.packages.append(Package('nicefrac'))
+tableAddress = article_folder + 'ionicAbundanceHeON'
+# print('Creating table in {}'.format(tableAddress))
+# dz.create_pdfDoc(tableAddress, pdf_type='table')
+# dz.pdfDoc.packages.append(Package('nicefrac'))
 dz.pdf_insert_table(headers_format)
 
 # Loop through the objects
@@ -71,5 +76,5 @@ for i in range(sampleObjects.size):
 
     dz.addTableRow(row_i, last_row=False if sampleObjects[-1] != objName else True, rounddig=3, rounddig_er=1)
 
-dz.generate_pdf()
-# dz.generate_pdf(output_address=pdf_address)
+# dz.generate_pdf()
+dz.generate_pdf(output_address=tableAddress)
