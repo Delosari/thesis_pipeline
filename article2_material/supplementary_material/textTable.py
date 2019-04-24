@@ -1,3 +1,5 @@
+import numpy as np
+from collections import OrderedDict
 from dazer_methods import Dazer
 from lib.inferenceModel import SpectraSynthesizer
 from lib.Astro_Libraries.spectrum_fitting.import_functions import make_folder
@@ -23,11 +25,11 @@ default_lines = ['H1_4341A', 'H1_6563A', 'He1_4471A', 'He1_5876A', 'He1_6678A',
 dz.quick_indexing(catalogue_df)
 
 # Sample objects
-excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS3', 'SDSS1', 'SHOC36']  # SHOC579, SHOC575, SHOC220, SHOC588, SHOC592, SHOC036
+excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS3', 'SDSS1', 'SHOC36']
 sampleObjects = catalogue_df.loc[dz.idx_include & ~catalogue_df.index.isin(excludeObjects)].index.values
 
-# Failing objects
-listFails = []
+# Generate spectra synthesizer object
+specS = SpectraSynthesizer()
 
 # Loop through the objects
 for i in range(sampleObjects.size):
@@ -41,9 +43,6 @@ for i in range(sampleObjects.size):
 
     if objName == '4_n1':
 
-        # Generate spectra synthesizer object
-        specS = SpectraSynthesizer()
-
         # Declare object folder
         objectFolder = '{}{}/'.format(root_folder, objName)#'{}{}\\'.format(root_folder, objName)
 
@@ -51,21 +50,24 @@ for i in range(sampleObjects.size):
         dataFileAddress = '{}{}_objParams.txt'.format(objectFolder, objName)
         obsData = specS.load_obsData(dataFileAddress, objName)
 
-        # Declaring configuration design
-        simuName = '{}_emissionHMC'.format(objName)
-        fit_conf = dict(obs_data=obsData,
-                        ssp_data=None,
-                        output_folder=objectFolder,
-                        spectra_components=['emission'],
-                        input_lines=obsData['input_lines'],
-                        prefit_ssp=False,
-                        normalized_by_Hbeta=False)
+        # Run the sampler
+        # TODO need to decide where to place this
+        model_name=objName + '_HMC_fit_v2',
+        db_address = objectFolder + model_name + '.db'
 
-        # Prepare fit data
-        specS.prepareSimulation(**fit_conf)
+        # Load the results
+        interenceParamsDict = specS.load_pymc_database_manual(db_address, sampler='pymc3')
 
-        # Run the simulation
-        specS.fitSpectra(model_name=objName + '_HMC_fit_v2', iterations=6000, tuning=3000,
-                         include_reddening=obsData['redening_check'], include_Thigh_prior=obsData['Thigh_check'])
+        # Compute elemental abundances from the traces
+        obsAtoms = self.obsAtoms
+        specS.elementalChemicalModel(interenceParamsDict, obsAtoms, (6000 + 3000) * 2)
 
-        print '- Finished object {}: {} {}'.format(i, objName, quick_reference)
+        # Save parameters into the object log #TODO make a new mechanism to delete the results region
+        store_params = OrderedDict()
+        for parameter in interenceParamsDict.keys():
+            if ('_log__' not in parameter) and ('interval' not in parameter) and ('_op' not in parameter):
+                trace = interenceParamsDict[parameter]
+                store_params[parameter] = np.array([trace.mean(), trace.std()])
+
+        # Plot output data
+        specS.plotOuputData(objectFolder + model_name, interenceParamsDict, specS.modelParams)

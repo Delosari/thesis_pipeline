@@ -1,6 +1,4 @@
 line_label	obs_wavelength	 obs_flux	obs_fluxErr	w1	w2	w3	w4	w5	w6	blended_label
-He1_4026A
-H1_4102A
 H1_4341A
 O3_4363A
 He1_4471A

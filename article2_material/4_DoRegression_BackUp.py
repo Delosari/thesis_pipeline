@@ -395,3 +395,37 @@ for i in range(len(Regresions_dict['Regressions'])):
 #
 # dz.generate_pdf(output_address=pdf_address)
 # # dz.generate_pdf()
+
+
+    # Data labels
+    element = regressions_list[i]
+    element_label = element + '_abund'
+    Ymass_label = YmassForElement[element]
+
+    # Get plot data
+    idcs_regresions = bayes_catalogue_df[element_label + '_nom'].notnull() & bayes_catalogue_df[Ymass_label + '_nom'].notnull() & ~bayes_catalogue_df.quick_reference.isin(Regresions_dict['excluded'][i])
+    objRegress = bayes_catalogue_df[idcs_regresions].quick_reference.values
+    print '{} included objects ({}): {}'.format(element_label, Ymass_label, '')
+    x, x_er = bayes_catalogue_df.loc[idcs_regresions, element_label + '_nom'].values, bayes_catalogue_df.loc[idcs_regresions, element_label + '_er'].values
+    y, y_er = bayes_catalogue_df.loc[idcs_regresions, Ymass_label + '_nom'].values, bayes_catalogue_df.loc[idcs_regresions, Ymass_label + '_er'].values
+
+    # Convert to natural scale
+    x_nat, x_er_nat = convert_natural_scale(x, x_er)
+
+    # Create containers
+    n_objects = len(objRegress)
+    metal_matrix, Y_matrix = np.empty((n_objects, MC_iterations)), np.empty((n_objects, MC_iterations))
+    m_vector, n_vector = np.empty(MC_iterations), np.empty(MC_iterations)
+
+    # Generate abundance distributions
+    for j in range(n_objects):
+        metal_matrix[j, :] = np.random.normal(x_nat[j], x_er_nat[j], size=MC_iterations)
+        Y_matrix[j, :] = np.random.normal(y[j], y_er[j], size=MC_iterations)
+
+    # Perform the regressions in a loop
+    for k in range(MC_iterations):
+        x_i, y_i = metal_matrix[:, k], Y_matrix[:, k]
+        m_vector[k], n_vector[k], r_value, p_value, std_err = stats.linregress(x_i, y_i)
+
+    # BCES method
+    m_bces, n_bces, m_err_bces, n_err_bces, cov_bces = bcesboot(x_nat,  x_er_nat, y, y_er, cerr=np.zeros(n_objects), nsim=5000)

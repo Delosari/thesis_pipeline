@@ -8,7 +8,8 @@ from lib.inferenceModel import SpectraSynthesizer
 from lmfit import Model, Parameters
 from scipy import stats
 from lib.Math_Libraries.bces_script import bces, bcesboot
-
+from scipy.optimize import curve_fit
+from lib.CodeTools.sigfig import round_sig
 
 def linear_model(x, m, n):
     return m * x + n
@@ -51,10 +52,9 @@ def latex_float(f):
 
 
 def convert_natural_scale(nom_values, er_values):
-    un_array_log = unnp.unumpy.uarray(x, x_er)
+    un_array_log = unnp.unumpy.uarray(nom_values, er_values)
     un_array_nat = unnp.unumpy.pow(10, un_array_log - 12)
     return unnp.unumpy.nominal_values(un_array_nat), unnp.unumpy.std_devs(un_array_nat)
-
 
 
 # Create class object
@@ -68,18 +68,35 @@ Regresions_dict['metal x axis']     = ['OI_HI', 'NI_HI', 'SI_HI']
 Regresions_dict['helium y axis']    = ['Ymass_O', 'Ymass_O', 'Ymass_S']
 Regresions_dict['color']          = ['tab:green', 'tab:blue', 'tab:orange']
 Regresions_dict['factor'] = [1e5, 1e6, 1e6]
+Regresions_dict['factor_labels'] = [1e-5, 1e-6, 1e-6]
 Regresions_dict['title'] = ['Helium mass fraction versus oxygen abundance',
                             'Helium mass fraction versus nitrogen abundance',
                             'Helium mass fraction versus sulfur abundance']
-Regresions_dict['x label'] = [r'$\frac{{O}}{{H}}$ $({})$'.format(latex_float(Regresions_dict['factor'][0])),
-                              r'$\frac{{N}}{{H}}$ $({})$'.format(latex_float(Regresions_dict['factor'][1])),
-                              r'$\frac{{S}}{{H}}$ $({})$'.format(latex_float(Regresions_dict['factor'][2]))]
+Regresions_dict['x label'] = [r'$\frac{{O}}{{H}}$ $\left({}\right)$'.format(latex_float(Regresions_dict['factor_labels'][0])),
+                              r'$\frac{{N}}{{H}}$ $\left({}\right)$'.format(latex_float(Regresions_dict['factor_labels'][1])),
+                              r'$\frac{{S}}{{H}}$ $\left({}\right)$'.format(latex_float(Regresions_dict['factor_labels'][2]))]
 Regresions_dict['excluded'] = [['FTDTR-2', 'MRK689', 'FTDTR-5', 'PHL293B'],
                               ['FTDTR-2', 'FTDTR-5', 'PHL293B'],
                               ['coso', 'PHL293B']]
 Regresions_dict['y label'] = [r'$Y_{\frac{O}{H}}$', r'$Y_{\frac{O}{H}}$', r'$Y_{\frac{S}{H}}$']
 Regresions_list = [['O', 'N'], ['O', 'S'], ['N', 'S'], ['O', 'N', 'S']]
 label_regr = 'Linear fit'
+method_dict = {'lm2': linear_model2, 'lm3': linear_model3, 'rlm2': residuals_lin2, 'rlm3': residuals_lin3}
+
+# Past regression
+inter_regr_dict = OrderedDict()
+inter_regr_dict['$Y_{P,\,O}^{1}$'] = [0.246,0.005,'18'] #Peimbert
+inter_regr_dict['$Y_{P,\,N}^{1}$'] = [0.251,0.005,'18'] #Aver
+inter_regr_dict['$Y_{P,\,S}^{1}$'] = [0.244,0.006,'21'] #Izotov
+inter_regr_dict['$Y_{P,\,O-N-S}^{1}$'] = [0.245,0.007,'17'] #Izotov
+
+# Other users
+exter_regr_dict = OrderedDict()
+exter_regr_dict['$Y_{P,\,O}^{2}$'] = ['0.2446','0.0029','5'] #Peimbert
+exter_regr_dict['$Y_{P,\,O}^{3}$'] = ['0.2449','0.0040','15'] #Aver
+exter_regr_dict['$Y_{P,\,O}^{4}$'] = ['0.2551','0.0022','28'] #Izotov
+exter_regr_dict['$Y_{P,\,Planck BBN}^{5}$'] = [0.24467,0.00020,'-']
+
 
 # Define plot frame and colors
 size_dict = {'figure.figsize': (18, 8), 'axes.labelsize': 38, 'legend.fontsize': 28,
@@ -94,6 +111,7 @@ YmassForElement = dict(O='Ymass_O', N='Ymass_O', S='Ymass_S')
 # Declare data location
 root_folder = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\bayesianModel\\'  # root_folder = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/bayesianModel/'
 article_folder = 'E:\\Dropbox\\Astrophysics\\Papers\\Yp_BayesianMethodology\\source files\\images\\'
+tables_folder = 'E:\\Dropbox\\Astrophysics\\Papers\\Yp_BayesianMethodology\\source files\\tables\\'
 whtSpreadSheet = 'E:\\Dropbox\\Astrophysics\\Data\\WHT_observations\\WHT_Galaxies_properties.xlsx'  # whtSpreadSheet = '/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx'
 
 # Load catalogue dataframe
@@ -102,9 +120,10 @@ dz.quick_indexing(catalogue_df)
 
 # Sample objects
 abundList = ['O_abund', 'N_abund', 'S_abund', 'Ymass_O', 'Ymass_S']
-excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS3', 'SDSS1', 'SHOC36']
+excludeObjects = ['SHOC579', 'SHOC575_n2', '11', 'SHOC588', 'SDSS3', 'SDSS1', 'SHOC36', '52319-521']
 sampleObjects = catalogue_df.loc[dz.idx_include & ~catalogue_df.index.isin(excludeObjects)].index.values
 bayes_catalogue_df = pd.DataFrame(columns=['quick_reference', 'local_reference'] + abundList)
+
 
 # Loop throught the objects and generate the dataframe
 for i in range(sampleObjects.size):
@@ -130,6 +149,7 @@ for i in range(sampleObjects.size):
             bayes_catalogue_df.loc[objName, abund + '_er'] = obsData[abund][1]
 
 # Perform the individual regressions:
+results_dict = OrderedDict()
 regressions_list = ['O', 'N', 'S']
 for i in range(len(regressions_list)):
 
@@ -167,23 +187,26 @@ for i in range(len(regressions_list)):
     m_bces, n_bces, m_err_bces, n_err_bces, cov_bces = bcesboot(x_nat,  x_er_nat, y, y_er, cerr=np.zeros(n_objects), nsim=5000)
 
     # Get fit mean values
-    m_Median, m_16th, m_84th = np.median(m_vector), np.percentile(m_vector, 16), np.percentile(m_vector, 84)
-    n_Median, n_16th, n_84th = np.median(n_vector), np.percentile(n_vector, 16), np.percentile(n_vector, 84)
+    m_Median, m_std, m_16th, m_84th = np.median(m_vector), np.std(m_vector), np.percentile(m_vector, 16), np.percentile(m_vector, 84)
+    n_Median, n_std, n_16th, n_84th = np.median(n_vector), np.std(n_vector), np.percentile(n_vector, 16), np.percentile(n_vector, 84)
     print '-- {} abundance Yp scipy: median {}, std {}; {} objects'.format(element_label, np.median(n_vector), np.std(n_vector), n_objects)
+
     # print '-- {} abundance Yp bces:  {} +/- {}'.format(element_label, n_bces[0], n_err_bces[0])
 
     # Saving the data
     entry_key = r'$Y_{{P,\,{elem}}}$'.format(elem=element)
+    results_dict[element] = np.array([entry_key, n_Median, n_std, n_objects])
 
     # Linear data
+    elemt_scale = Regresions_dict['factor'][i]
     x_regression_range = np.linspace(0.0, np.max(x_nat) * 1.10, 20)
     y_regression_range = m_Median * x_regression_range + n_Median
 
     # Plotting the data,
     label_regression = r'Plank prediction: $Y = 0.24709\pm0.00025$'
-    dz.data_plot(x_regression_range, y_regression_range, label=label_regr, linestyle='--', color=Regresions_dict['color'][i])
-    dz.data_plot(x_nat, y, label='HII galaxies included', markerstyle='o', x_error=x_er_nat, y_error=y_er, color=Regresions_dict['color'][i])
-    dz.plot_text(x_nat, y, objRegress)
+    dz.data_plot(x_regression_range * elemt_scale, y_regression_range, label=label_regr, linestyle='--', color=Regresions_dict['color'][i])
+    dz.data_plot(x_nat * elemt_scale, y, label='HII galaxies included', markerstyle='o', x_error=x_er_nat * elemt_scale, y_error=y_er, color=Regresions_dict['color'][i])
+    #dz.plot_text(x_nat, y, objRegress)
 
     # Plot WMAP prediction
     dz.data_plot(WMAP_coordinates[0].nominal_value, WMAP_coordinates[1].nominal_value, color=dz.colorVector['pink'],
@@ -194,6 +217,93 @@ for i in range(len(regressions_list)):
 
     output_pickle = '{objFolder}{element}_BayesDataRegression'.format(objFolder=article_folder, element=element)
     dz.save_manager(output_pickle, save_pickle=False)
+
+# Perform the triple regression
+idcs_3Regres = bayes_catalogue_df['O_abund_nom'].notnull() &\
+               bayes_catalogue_df['N_abund_nom'].notnull() &\
+               bayes_catalogue_df['S_abund_nom'].notnull() &\
+               bayes_catalogue_df['Ymass_S_nom'].notnull() &\
+               ~bayes_catalogue_df.quick_reference.isin(Regresions_dict['excluded'][0] + Regresions_dict['excluded'][1] + Regresions_dict['excluded'][2])
+
+
+objRegress = bayes_catalogue_df[idcs_3Regres].quick_reference.values
+O, O_er = bayes_catalogue_df.loc[idcs_3Regres, 'O_abund_nom'].values, bayes_catalogue_df.loc[idcs_3Regres, 'O_abund_er'].values
+N, N_er = bayes_catalogue_df.loc[idcs_3Regres, 'N_abund_nom'].values, bayes_catalogue_df.loc[idcs_3Regres, 'N_abund_er'].values
+S, S_er = bayes_catalogue_df.loc[idcs_3Regres, 'S_abund_nom'].values, bayes_catalogue_df.loc[idcs_3Regres, 'S_abund_er'].values
+y, y_er = bayes_catalogue_df.loc[idcs_3Regres,'Ymass_S_nom'].values, bayes_catalogue_df.loc[idcs_3Regres, 'Ymass_S_er'].values
+
+print 'Included objects: {}'.format(objRegress)
+
+# Convert to natural scale
+O_nat, O_er_nat = convert_natural_scale(O, O_er)
+N_nat, N_er_nat = convert_natural_scale(N, N_er)
+S_nat, S_er_nat = convert_natural_scale(S, S_er)
+
+# Create containers
+n_objects = len(objRegress)
+p0 = np.array([0.005] * 3 + [0.25])
+O_matrix, N_matrix, S_matrix = np.empty((n_objects, MC_iterations)), np.empty((n_objects, MC_iterations)), np.empty((n_objects, MC_iterations))
+metal_matrix    = np.empty((3, n_objects, MC_iterations))
+curvefit_matrix = np.empty([3 + 1, MC_iterations])
+
+Y_matrix = np.empty((n_objects, MC_iterations))
+
+mO_vector, mN_vector, mS_vector = np.empty(MC_iterations), np.empty(MC_iterations), np.empty(MC_iterations)
+n_vector = np.empty(MC_iterations)
+
+# Generate the distributions
+for j in range(n_objects):
+    Y_matrix[j, :] = np.random.normal(y[j], y_er[j], size=MC_iterations)
+    metal_matrix[0, j, :] = np.random.normal(O_nat[j], O_er_nat[j], size=MC_iterations)
+    metal_matrix[1, j, :] = np.random.normal(N_nat[j], N_er_nat[j], size=MC_iterations)
+    metal_matrix[2, j, :] = np.random.normal(S_nat[j], S_er_nat[j], size=MC_iterations)
+
+#Perform the regressions in a loop
+for k in range(MC_iterations):
+
+    # Dictionary to store the current iteration
+    x_ith = metal_matrix[:, :, k]
+    y_ith = Y_matrix[:, k]
+
+    # Curvefit
+    best_vals, covar = curve_fit(method_dict['lm3'], x_ith, y_ith, p0=p0)
+    curvefit_matrix[:, k] = best_vals
+
+# Generat mean value
+n_Median_cf, n_std_df, n_16th_cf, n_84th_cf = np.median(curvefit_matrix[3, :]), np.std(curvefit_matrix[3, :]), np.percentile(curvefit_matrix[3, :],16), np.percentile(curvefit_matrix[3, :], 84)
+entry_key = r'$Y_{{P,\,{elemA}-{elemB}-{elemC}}}$'.format(elemA='O', elemB='N', elemC='S')
+
+# Save the results
+results_dict['ONS'] = np.array([entry_key, n_Median_cf, n_std_df, n_objects])
+
+# Make the table
+pdf_address = tables_folder + 'yp_determinations'
+# dz.create_pdfDoc(pdf_address, pdf_type='table')
+
+headers = ['Element regression', 'Value', 'Number of objects']
+dz.pdf_insert_table(headers)
+
+last_key = results_dict.keys()[-1]
+for key in results_dict:
+    magnitude_entry = r'${}\pm{}$'.format(round_sig(results_dict[key][1], 3, scien_notation=False), round_sig(results_dict[key][2], 1, scien_notation=False))
+    row = [results_dict[key][0], magnitude_entry, str(int(results_dict[key][3]))]
+    dz.addTableRow(row, last_row = False if last_key != last_key else True)
+dz.table.add_hline()
+
+for key in inter_regr_dict:
+    magnitude_entry = r'${}\pm{}$'.format(inter_regr_dict[key][0], inter_regr_dict[key][1])
+    row = [key, magnitude_entry, inter_regr_dict[key][2]]
+    dz.addTableRow(row, last_row = False if last_key != last_key else True)
+dz.table.add_hline()
+
+for key in exter_regr_dict:
+    magnitude_entry = r'${}\pm{}$'.format(exter_regr_dict[key][0], exter_regr_dict[key][1])
+    row = [key, magnitude_entry, exter_regr_dict[key][2]]
+    dz.addTableRow(row, last_row = False if last_key != last_key else True)
+
+dz.generate_pdf(output_address=pdf_address)
+# dz.generate_pdf(clean_tex=True)
+
 
 
 

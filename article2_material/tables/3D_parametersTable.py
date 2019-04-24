@@ -16,13 +16,18 @@ def checkDictValue(inputDict, variable, emptyValue='-'):
 
 # Headers
 headers_dic = OrderedDict()
-headers_dic['n_e'] = r'$n_{e}[SII](cm^{-3})$'
-headers_dic['T_low'] = r'$T_{e}[SIII](K)$'
-headers_dic['T_high'] = r'$T_{e}[OIII](K)$'
-headers_dic['cHbeta'] = r'$c(H\beta)$'
+# headers_dic['n_e'] = r'$n_{e}[SII](cm^{-3})$'
+# headers_dic['T_low'] = r'$T_{e}[SIII](K)$'
+# headers_dic['T_high'] = r'$T_{e}[OIII](K)$'
+# headers_dic['cHbeta'] = r'$c(H\beta)$'
+headers_dic['n_e'] = r'$n_{e}[SII]$'
+headers_dic['T_low'] = r'$T_{e}[SIII]$'
+headers_dic['T_high'] = r'$T_{e}[OIII]$'
+headers_dic['cHbeta'] = ''
+
 # headers_dic['tau'] = r'$\tau$'
 varsNum = len(headers_dic)
-headers_format = ['HII Galaxy'] + headers_dic.values()
+headers_format = [''] + headers_dic.values()
 
 # Import functions
 dz = Dazer()
@@ -49,7 +54,8 @@ tableAddress = article_folder + 'modelParameters'
 # print('Creating table in {}'.format(tableAddress))
 # dz.create_pdfDoc(tableAddress, pdf_type='table')
 # dz.pdfDoc.packages.append(Package('nicefrac'))
-dz.pdf_insert_table(headers_format)
+dz.pdf_insert_table(headers_format, addfinalLine=False)
+dz.addTableRow(['HII Galaxy','$(cm^{-3})$','$(K)$','$(K)$',r'$c(H\beta)$'], last_row=True)
 
 # Loop through the objects
 for i in range(sampleObjects.size):
