@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aad44bcb-524c-4174-b8be-249ddba05685" name="Default" comment="Work 2018/12/13">
-      <change beforePath="$PROJECT_DIR$/../dazer/.idea/Dazer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../dazer/.idea/Dazer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Thesis_Pipeline.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Thesis_Pipeline.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
-    <ignored path="Thesis_Pipeline.iws" />
-    <ignored path=".idea/workspace.xml" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,18 +15,8 @@
   <component name="FavoritesManager">
     <favorites_list name="Thesis_Pipeline" />
   </component>
-  <component name="FileEditorManager">
-    <leaf />
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py" />
-      </list>
-    </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-10" />
@@ -39,6 +24,7 @@
     <option name="width" value="1940" />
     <option name="height" value="1050" />
   </component>
+  <component name="ProjectId" id="1YXWLQBZ8MujY0O3sVYsPOTb8JX" />
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
       <profile-state>
@@ -59,49 +45,15 @@
     </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane" />
-      <pane id="Scope">
-        <subPane subId="Changed Files">
-          <expand>
-            <path>
-              <item name="Root" type="cbb8eebc:String" user="Root" />
-              <item name="thesis_pipeline" type="cbb8eebc:String" user="thesis_pipeline" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-        <subPane subId="Project Files">
-          <expand>
-            <path>
-              <item name="Root" type="cbb8eebc:String" user="Root" />
-              <item name="thesis_pipeline" type="cbb8eebc:String" user="thesis_pipeline" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../dazer/bin" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Python.C0_Response_MasterFlat">
     <configuration default="true" type="tests" factoryName="Attests">
@@ -165,114 +117,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Nosetests">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_regexPattern" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Twisted Trial">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Unittests">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="py.test">
-      <module name="Dazer" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Python.B3_Flatcombine" />
       <item itemvalue="Python.C0_Response_MasterFlat" />
@@ -321,29 +165,6 @@
       <is-autoscroll-to-source value="true" />
     </todo-panel>
   </component>
-  <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49893844" visible="true" weight="0.35228023" />
-      <window_info id="Favorites" order="1" sideWeight="0.50106156" side_tool="true" weight="0.1440846" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3677911" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32967034" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5009914" side_tool="true" weight="0.3286119" />
-      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.4990086" visible="true" weight="0.3286119" />
-      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.4957265" weight="0.32967034" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32967034" />
-      <window_info anchor="bottom" id="Structure" order="11" weight="0.24945055" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Data View" order="3" />
-    </layout>
-  </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
       <collection />
@@ -356,34 +177,5 @@
     <MESSAGE value="Work 2018/03/15" />
     <MESSAGE value="Work 2018/12/13" />
     <option name="LAST_COMMIT_MESSAGE" value="Work 2018/12/13" />
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Spectra_Reduction/B3_Flatcombine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="8" column="4" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
-          <folding>
-            <element signature="e#330#1993#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../dazer/bin/DZ_observation_reduction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="2523" column="8" selection-start-line="2523" selection-start-column="8" selection-end-line="2523" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Spectra_Reduction/C0_Response_MasterFlat.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="48" column="30" selection-start-line="48" selection-start-column="30" selection-end-line="48" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>
