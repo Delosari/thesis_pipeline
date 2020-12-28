@@ -65,16 +65,11 @@ for i in range(sampleObjects.size):
     # Folder where the fitting results are stored
     inputFileReference = objectFolder + 'output_data\\' + objName + '_HMC_fit_v2'
 
-    print 'Treating {}, {}'.format(objName, quick_reference)
-
     for itemExtension in conversionFileReferences:
         originalFile = '{}{}'.format(inputFileReference, itemExtension)
         targetFile = '{}{}{}'.format(fileFolders[itemExtension], quick_reference, conversionFileReferences[itemExtension])
         shutil.copyfile(originalFile, targetFile)
 
-        print originalFile
-        print targetFile
-        print
 
 
 

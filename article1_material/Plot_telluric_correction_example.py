@@ -235,8 +235,7 @@ for i in range(len(catalogue_df.index)):
             axins.set_xlim(7550, 7700)
             axins.set_ylim(-0.2e-16, 2.0e-16)
             mark_inset(dz.ax1, axins, loc1=3, loc2=4, fc="none", ec="0.5")
-             
-             
+
             axins2 = zoomed_inset_axes(dz.ax1, zoom=6, loc=7)
             axins2.step(wave_obs[region_indeces(wave_join, wave_max, wave_obs)], flux_obs[region_indeces(wave_join, wave_max, wave_obs)], label='Observed spectrum', linestyle='--', color=colorVector['dark blue'], where = 'mid')       
             axins2.step(wave_tell, flux_tell, color=colorVector['orangish'], where = 'mid', linewidth=0.75)

@@ -12,7 +12,7 @@ dz.FigConf(plotSize = size_dict)
 
 #Declare data location
 folder_data       = '/home/vital/Dropbox/Astrophysics/Seminars/Cloudy School 2017/teporingos/Grid_data_vital/'
-file_name_list_S  = ['TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_S','TGrid_Mass200000.0_age5.48_zStar-2.1_zGas0.008.ele_S']
+file_name_list_S  = ['TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_S', 'TGrid_Mass200000.0_age5.48_zStar-2.1_zGas0.008.ele_S']
 file_name_list_O  = ['TGrid_Mass100000.0_age5.48_zStar-2.1_zGas0.008.ele_O', 'TGrid_Mass200000.0_age5.48_zStar-2.1_zGas0.008.ele_O']
 z_list            = ['100000', '200000']
 ions_list_S       = ['S+', 'S+2', 'S+3']
