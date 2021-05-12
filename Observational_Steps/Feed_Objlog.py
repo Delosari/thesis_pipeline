@@ -48,7 +48,7 @@ Catalogue_Dic                               = DataToTreat('WHT_CandiatesObjects_
 pv.generate_catalogue_tree(Catalogue_Dic)
 
 #Recover objects list
-Table_Address   = Catalogue_Dic['Data_Folder'] + 'WHT_Candidate_Objects_List'
+Table_Address = Catalogue_Dic['Data_Folder'] + 'WHT_Candidate_Objects_List'
 Candiates_frame = pd.read_csv(Table_Address, delimiter = '; ', header = 0, index_col = 0)
 
 print 'Using this file', Table_Address
