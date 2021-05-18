@@ -181,7 +181,7 @@ class EmissivitySurfaceFitter():
                         edgecolors='black', linewidths=0.1, cmap=cm.OrRd , label='Error above 1%')
 
             # Color bar
-            cbar = plt.colorbar()
+            cbar = f.colorbar()
             cbar.ax.set_ylabel('% difference', rotation=270, fontsize=15)
 
         # Add labels

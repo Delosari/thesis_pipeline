@@ -134,7 +134,7 @@ line_func = efitter.emis_eq_dict[line_label]
 p1, cov1 = efitter.fitEmis(line_func, (XX, YY), emis_dict[line_label])
 coeffs_dict[line_label] = p1
 
-#efitter.emisTeNe_2DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
+efitter.emisTeNe_2DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
 #efitter.emisTeNe_3DPlot(coeffs_dict[line_label], line_func, (XX, YY), emis_dict[line_label], line_label)
 
 # Generate synthetic data
