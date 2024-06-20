@@ -33,8 +33,7 @@ dic_cords['SHOC579'] = [0.101, 0.152]
 dz = Dazer()
 
 #Load catalogue dataframe
-catalogue_dict  = dz.import_catalogue()
-catalogue_df    = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx')
+catalogue_df = dz.load_excel_DF('/home/vital/Dropbox/Astrophysics/Data/WHT_observations/WHT_Galaxies_properties.xlsx')
 
 #Define plot frame and colors
 size_dict = {'figure.figsize':(18, 8), 'axes.labelsize':35, 'legend.fontsize':26, 'font.family':'Times New Roman', 'mathtext.default':'regular', 'xtick.labelsize':32, 'ytick.labelsize':32}
@@ -66,7 +65,7 @@ for i in range(len(objects)):
 
 dz.FigWording(r'y', r'$N/O$', '')
 #dz.display_fig()
-dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/NO_to_y')
+#dz.savefig('/home/vital/Dropbox/Astrophysics/Papers/Yp_AlternativeMethods/images/NO_to_y')
 
 # from dazer_methods import Dazer
 # from uncertainties import unumpy
